@@ -6,8 +6,7 @@ This repository contains a very primitive application for interacting with World
 
 ## Status
 
-Currently, despite its name, the files are currently read-only.
-The application also only reads the first section of the file (Groups, Subgroups and Subitems), while ignoring most of the actual content.
+Files can be opened, and saved again. The application also only reads and writes the first section of the file (Groups, Subgroups and Subitems), while ignoring most of the actual content.
 
 ## TODO
 1. ~~Add Serialization logic so files can be saved again after editing~~ (The fields that are being parsed are being reconstructed correctly, however, not all data is being parsed currently, of course)
