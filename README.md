@@ -12,4 +12,4 @@ The application also only reads the first section of the file (Groups, Subgroups
 ## TODO
 1. Add Serialization logic so files can be saved again after editing
 2. Add UI support for more missing fields (Unknown 37 bytes in presenter info, for instance)
-3. Add support for actual data chunks\
+3. Add support for actual data chunks
