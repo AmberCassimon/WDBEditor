@@ -5,6 +5,8 @@
 
 #include "libWDB/Serializer.hpp"
 
+#include "libWDB/Util.hpp"
+
 namespace libWDB
 {
 	auto Save(
@@ -12,6 +14,10 @@ namespace libWDB
 		FILE* fileptr
 	) -> void
 	{
-
+		// Write the number of groups
+		Uint32ToLEBytes(
+			static_cast<std::uint32_t>(database.Groups().size()),
+			fileptr
+		);
 	}
 } // namespace libWDB

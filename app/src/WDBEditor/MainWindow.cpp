@@ -18,6 +18,7 @@
 #include "WDBEditor/Util.hpp"
 
 #include "libWDB/Parser.hpp"
+#include "libWDB/Serializer.hpp"
 #include "libWDB/WDBParseException.hpp"
 
 namespace WDBEditor
@@ -120,8 +121,8 @@ namespace WDBEditor
 		QMenu* fileMenu = this->menuBar()->addMenu("&File");
 
 		fileMenu->addAction(this->open_file_act);
-		// fileMenu->addAction(this->save_file_act);
-		// fileMenu->addAction(this->save_as_file_act);
+		fileMenu->addAction(this->save_file_act);
+		fileMenu->addAction(this->save_as_file_act);
 
 		return fileMenu;
 	}
@@ -213,10 +214,6 @@ namespace WDBEditor
 
 		try
 		{
-#ifndef NDEBUG
-			qDebug() << "Reading " << filename;
-#endif
-
 			std::optional<libWDB::WorldDatabase> wdb = libWDB::ParseWDB(fileptr);
 
 			if (wdb.has_value())
@@ -241,13 +238,73 @@ namespace WDBEditor
 	}
 	void MainWindow::Save()
 	{
-		qDebug() << "Save!";
+		// No file was specified!
+		if (!this->filename.has_value())
+		{
+			QMessageBox dialog;
+			dialog.setText("No .wdb file was open!");
+			dialog.exec();
+			return;
+		}
+
+		FILE* fileptr;
+
+		const errno_t open_error = fopen_s(&fileptr, this->filename->c_str(), "wb");
+
+		// Check that we actually managed to open the file
+		if (0 != open_error)
+		{
+			return;
+		}
+
+		libWDB::Save(
+			this->wdb_model->GetModel(),
+			fileptr
+		);
+
+		// What are we going to do if an error occurs during closing?
+		// Not much we can recover from, realistically?
+		const int _ = fclose(fileptr);
+
+		// Changes were written to disk, reset dirty flag
 		this->dirty = false;
+
+		this->UpdateWindowTitle();
 	}
 	void MainWindow::SaveAs()
 	{
-		qDebug() << "Save As!";
+		const QString filename = QFileDialog::getSaveFileName(
+			this, "Save .wdb file", QString::fromUtf8(HomeDirectory().c_str()), ".wdb Files (*.wdb)"
+		);
+
+		const QByteArray utf8_bytes = filename.toUtf8();
+
+		FILE* fileptr;
+
+		const errno_t open_error = fopen_s(&fileptr,utf8_bytes, "wb");
+
+		// Check that we actually managed to open the file
+		if (0 != open_error)
+		{
+			return;
+		}
+
+		libWDB::Save(
+			this->wdb_model->GetModel(),
+			fileptr
+		);
+
+		// What are we going to do if an error occurs during closing?
+		// Not much we can recover from, realistically?
+		const int _ = fclose(fileptr);
+
+		// Current filename is set to the last saved filename
+		this->filename = utf8_bytes.toStdString();
+
+		// Changes were written to disk, reset dirty flag
 		this->dirty = false;
+
+		this->UpdateWindowTitle();
 	}
 
 	void MainWindow::ShowLicense() {
