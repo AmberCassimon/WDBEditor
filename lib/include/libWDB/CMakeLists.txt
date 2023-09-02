@@ -3,6 +3,7 @@ target_sources(WDB PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Group.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/NodeType.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Parser.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Serializer.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/SubGroup.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/SubItem.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/SubItemPresenterData.hpp
