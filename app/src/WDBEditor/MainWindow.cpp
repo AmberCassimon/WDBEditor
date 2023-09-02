@@ -18,6 +18,7 @@
 #include "WDBEditor/Util.hpp"
 
 #include "libWDB/Parser.hpp"
+#include "libWDB/Serializer.hpp"
 #include "libWDB/WDBParseException.hpp"
 
 namespace WDBEditor
@@ -28,6 +29,7 @@ namespace WDBEditor
 		save_file_act(this->PrepareSaveAction()),
 		save_as_file_act(this->PrepareSaveAsAction()),
 		show_license_act(this->PrepareShowLicenseAction()),
+		show_version_act(this->PrepareShowVersionAction()),
 		file_menu(this->PrepareFileMenu()),
 		about_menu(this->PrepareAboutMenu()),
 		h_splitter(this->PrepareHSplitter()),
@@ -57,6 +59,7 @@ namespace WDBEditor
 		delete this->save_file_act;
 		delete this->save_as_file_act;
 		delete this->show_license_act;
+		delete this->show_version_act;
 
 		// Delete Main UI
 		// Deleting splitter also deletes tree view
@@ -115,13 +118,23 @@ namespace WDBEditor
 		return showLicenseAction;
 	}
 
+	auto MainWindow::PrepareShowVersionAction() -> QAction* {
+		QAction* showVersionAction = new QAction("&Version", this);
+
+		showVersionAction->setStatusTip("Show the software version");
+
+		connect(showVersionAction, &QAction::triggered, this, &MainWindow::ShowVersion);
+
+		return showVersionAction;
+	}
+
 	auto MainWindow::PrepareFileMenu() -> QMenu*
 	{
 		QMenu* fileMenu = this->menuBar()->addMenu("&File");
 
 		fileMenu->addAction(this->open_file_act);
-		// fileMenu->addAction(this->save_file_act);
-		// fileMenu->addAction(this->save_as_file_act);
+		fileMenu->addAction(this->save_file_act);
+		fileMenu->addAction(this->save_as_file_act);
 
 		return fileMenu;
 	}
@@ -131,6 +144,7 @@ namespace WDBEditor
 		QMenu* aboutMenu = this->menuBar()->addMenu("&About");
 
 		aboutMenu->addAction(this->show_license_act);
+		aboutMenu->addAction(this->show_version_act);
 
 		return aboutMenu;
 	}
@@ -213,10 +227,6 @@ namespace WDBEditor
 
 		try
 		{
-#ifndef NDEBUG
-			qDebug() << "Reading " << filename;
-#endif
-
 			std::optional<libWDB::WorldDatabase> wdb = libWDB::ParseWDB(fileptr);
 
 			if (wdb.has_value())
@@ -239,15 +249,77 @@ namespace WDBEditor
 		// Not much we can recover from, realistically?
 		const int _ = fclose(fileptr);
 	}
+
 	void MainWindow::Save()
 	{
-		qDebug() << "Save!";
+		// No file was specified!
+		if (!this->filename.has_value())
+		{
+			QMessageBox dialog;
+			dialog.setText("No .wdb file was open!");
+			dialog.exec();
+			return;
+		}
+
+		FILE* fileptr;
+
+		const errno_t open_error = fopen_s(&fileptr, this->filename->c_str(), "wb");
+
+		// Check that we actually managed to open the file
+		if (0 != open_error)
+		{
+			return;
+		}
+
+		libWDB::Save(
+			this->wdb_model->GetModel(),
+			fileptr
+		);
+
+		// What are we going to do if an error occurs during closing?
+		// Not much we can recover from, realistically?
+		const int _ = fclose(fileptr);
+
+		// Changes were written to disk, reset dirty flag
 		this->dirty = false;
+
+		this->UpdateWindowTitle();
 	}
+
 	void MainWindow::SaveAs()
 	{
-		qDebug() << "Save As!";
+		const QString filename = QFileDialog::getSaveFileName(
+			this, "Save .wdb file", QString::fromUtf8(HomeDirectory().c_str()), ".wdb Files (*.wdb)"
+		);
+
+		const QByteArray utf8_bytes = filename.toUtf8();
+
+		FILE* fileptr;
+
+		const errno_t open_error = fopen_s(&fileptr,utf8_bytes, "wb");
+
+		// Check that we actually managed to open the file
+		if (0 != open_error)
+		{
+			return;
+		}
+
+		libWDB::Save(
+			this->wdb_model->GetModel(),
+			fileptr
+		);
+
+		// What are we going to do if an error occurs during closing?
+		// Not much we can recover from, realistically?
+		const int _ = fclose(fileptr);
+
+		// Current filename is set to the last saved filename
+		this->filename = utf8_bytes.toStdString();
+
+		// Changes were written to disk, reset dirty flag
 		this->dirty = false;
+
+		this->UpdateWindowTitle();
 	}
 
 	void MainWindow::ShowLicense() {
@@ -277,6 +349,24 @@ namespace WDBEditor
 		license_dialog.setTextInteractionFlags(Qt::TextBrowserInteraction);
 
 		license_dialog.exec();
+	}
+
+	void MainWindow::ShowVersion() {
+		QString version_string = QString::fromStdString(
+			"WDBEditor Version: " + std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(PATCH_VERSION) + "\n" +
+			"Build Date: " + BUILD_DATE + "\n" +
+			"Qt " + std::to_string(QT_VERSION_MAJOR) + "." + std::to_string(QT_VERSION_MINOR) + "." + std::to_string(QT_VERSION_PATCH)
+		);
+
+		QMessageBox version_dialog (
+			QMessageBox::Icon::Information,
+			QString("Version"),
+			version_string
+		);
+
+		version_dialog.setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse);
+
+		version_dialog.exec();
 	}
 
 	void MainWindow::SelectionChanged(const QModelIndex& index)
@@ -336,4 +426,5 @@ namespace WDBEditor
 			}
 		}
 	}
+
 } // namespace WDBEditor

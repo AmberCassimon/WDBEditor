@@ -41,6 +41,7 @@ namespace WDBEditor
 			QAction* save_file_act {nullptr};
 			QAction* save_as_file_act {nullptr};
 			QAction* show_license_act {nullptr};
+			QAction* show_version_act {nullptr};
 
 			// Menus
 			QMenu* file_menu {nullptr};
@@ -65,6 +66,8 @@ namespace WDBEditor
 			auto PrepareSaveAsAction() -> QAction*;
 
 			auto PrepareShowLicenseAction() -> QAction*;
+
+			auto PrepareShowVersionAction() -> QAction*;
 
 			// Prepare Menu
 			auto PrepareFileMenu() -> QMenu*;
@@ -92,6 +95,8 @@ namespace WDBEditor
 			void SaveAs();
 
 			void ShowLicense();
+
+			void ShowVersion();
 
 			void SelectionChanged(const QModelIndex& index);
 	};
