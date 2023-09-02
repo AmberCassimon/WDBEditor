@@ -29,6 +29,7 @@ namespace WDBEditor
 		save_file_act(this->PrepareSaveAction()),
 		save_as_file_act(this->PrepareSaveAsAction()),
 		show_license_act(this->PrepareShowLicenseAction()),
+		show_version_act(this->PrepareShowVersionAction()),
 		file_menu(this->PrepareFileMenu()),
 		about_menu(this->PrepareAboutMenu()),
 		h_splitter(this->PrepareHSplitter()),
@@ -58,6 +59,7 @@ namespace WDBEditor
 		delete this->save_file_act;
 		delete this->save_as_file_act;
 		delete this->show_license_act;
+		delete this->show_version_act;
 
 		// Delete Main UI
 		// Deleting splitter also deletes tree view
@@ -116,6 +118,16 @@ namespace WDBEditor
 		return showLicenseAction;
 	}
 
+	auto MainWindow::PrepareShowVersionAction() -> QAction* {
+		QAction* showVersionAction = new QAction("&Version", this);
+
+		showVersionAction->setStatusTip("Show the software version");
+
+		connect(showVersionAction, &QAction::triggered, this, &MainWindow::ShowVersion);
+
+		return showVersionAction;
+	}
+
 	auto MainWindow::PrepareFileMenu() -> QMenu*
 	{
 		QMenu* fileMenu = this->menuBar()->addMenu("&File");
@@ -132,6 +144,7 @@ namespace WDBEditor
 		QMenu* aboutMenu = this->menuBar()->addMenu("&About");
 
 		aboutMenu->addAction(this->show_license_act);
+		aboutMenu->addAction(this->show_version_act);
 
 		return aboutMenu;
 	}
@@ -338,6 +351,24 @@ namespace WDBEditor
 		license_dialog.exec();
 	}
 
+	void MainWindow::ShowVersion() {
+		QString version_string = QString::fromStdString(
+			"WDBEditor Version: " + std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(PATCH_VERSION) + "\n" +
+			"Build Date: " + BUILD_DATE + "\n" +
+			"Qt " + std::to_string(QT_VERSION_MAJOR) + "." + std::to_string(QT_VERSION_MINOR) + "." + std::to_string(QT_VERSION_PATCH)
+		);
+
+		QMessageBox version_dialog (
+			QMessageBox::Icon::Information,
+			QString("Version"),
+			version_string
+		);
+
+		version_dialog.setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse);
+
+		version_dialog.exec();
+	}
+
 	void MainWindow::SelectionChanged(const QModelIndex& index)
 	{
 		if (QModelIndex() == index)
@@ -395,4 +426,5 @@ namespace WDBEditor
 			}
 		}
 	}
+
 } // namespace WDBEditor
