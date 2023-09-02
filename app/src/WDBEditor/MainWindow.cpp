@@ -236,6 +236,7 @@ namespace WDBEditor
 		// Not much we can recover from, realistically?
 		const int _ = fclose(fileptr);
 	}
+
 	void MainWindow::Save()
 	{
 		// No file was specified!
@@ -271,6 +272,7 @@ namespace WDBEditor
 
 		this->UpdateWindowTitle();
 	}
+
 	void MainWindow::SaveAs()
 	{
 		const QString filename = QFileDialog::getSaveFileName(

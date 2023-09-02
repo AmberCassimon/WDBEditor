@@ -98,4 +98,28 @@ namespace libWDB
 
 		assert(4 == elems_written);
 	}
+
+	auto ByteArrayToLEBytes(const std::vector<unsigned char>& bytes, FILE* fileptr) -> void
+	{
+		const int chars_written = fwrite(
+			bytes.data(),
+			sizeof(char),
+			bytes.size(),
+			fileptr
+		);
+
+		assert(bytes.size() == chars_written);
+	}
+
+	auto ASCIIStringToLEBytes(const std::string& str, FILE* fileptr) -> void
+	{
+		const int chars_written = fwrite(
+			str.c_str(),
+			sizeof(char),
+			str.size(),
+			fileptr
+		);
+
+		assert(str.size() == chars_written);
+	}
 } // namespace libWDB
