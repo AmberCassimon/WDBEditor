@@ -1,0 +1,30 @@
+AlignAfterOpenBracket: BlockIndent
+AllowAllArgumentsOnNextLine: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: AfterColon
+BraceWrapping:
+  AfterControlStatement: Always
+  AfterClass: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  BeforeElse: true
+ColumnLimit: 120
+IndentAccessModifiers: true
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentWidth: 4
+InsertTrailingCommas: Wrapped
+NamespaceIndentation: All
+PackConstructorInitializers: NextLine
+PointerAlignment: Left
+ReferenceAlignment: Left
+SortIncludes: CaseInsensitive
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeCpp11BracedList: true
+TabWidth: 4
+UseCRLF: false
+UseTab: Always
