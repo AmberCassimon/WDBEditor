@@ -10,6 +10,6 @@ Files can be opened, and saved again. The application also only reads and writes
 
 ## TODO
 1. ~~Add Serialization logic so files can be saved again after editing~~ (The fields that are being parsed are being reconstructed correctly, however, not all data is being parsed currently, of course)
-2. Add UI support for more missing fields (Unknown 37 bytes in presenter info, for instance)
+2. ~~Add UI support for more missing fields (Unknown 37 bytes in presenter info, for instance)~~ (Unknown field has been added, data chunks come later)
 3. Add support for actually editing fields, rather than just showing them
 4. Add support for actual data chunks
