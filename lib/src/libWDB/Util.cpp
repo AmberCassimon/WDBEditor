@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 
 #include <array>
 #include <sstream>
@@ -22,7 +23,14 @@ namespace libWDB
 		{
 			char error_buffer[255];
 
+			// _s functions are microsoft extensions
+#if defined(_MSC_VER)
 			strerror_s(&error_buffer[0], sizeof(error_buffer), errno);
+#else
+			char* error_str = strerror(errno);
+
+			strncpy(&error_buffer[0], error_str, std::min(strlen(error_str), sizeof(error_buffer)));
+#endif
 
 			throw std::runtime_error("Failed to get current position in file: " + std::string {error_buffer});
 		}
@@ -38,8 +46,13 @@ namespace libWDB
 		{
 			char error_buffer[255];
 
+#if defined(_MSC_VER)
 			strerror_s(&error_buffer[0], sizeof(error_buffer), errno);
+#else
+			char* error_str = strerror(errno);
 
+			strncpy(&error_buffer[0], error_str, std::min(strlen(error_str), sizeof(error_buffer)));
+#endif
 			throw std::runtime_error("Call to ftell() failed: " + std::string {error_buffer});
 		}
 

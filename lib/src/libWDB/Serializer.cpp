@@ -6,6 +6,7 @@
 #include "libWDB/Serializer.hpp"
 
 #include <cassert>
+#include <cstdint>
 
 #include "libWDB/Util.hpp"
 

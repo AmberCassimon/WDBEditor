@@ -5,6 +5,9 @@
 
 #include "libWDB/Parser.hpp"
 
+#include <cstdint>
+#include <cstdio>
+
 #include "libWDB/Util.hpp"
 #include "libWDB/WDBParseException.hpp"
 
@@ -12,7 +15,12 @@ namespace libWDB
 {
 	namespace __detail
 	{
-		auto ParseSubItem(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* subgroup_node, bool read_presenter_data) -> void
+		auto ParseSubItem(
+			unsigned char** byte_ptr,
+			const unsigned char* end,
+			BinaryTreeNode<WorldDatabaseNode>* subgroup_node,
+			bool read_presenter_data
+		) -> void
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
@@ -40,10 +48,15 @@ namespace libWDB
 
 			const SubItem subitem {subitem_title, subitem_size, subitem_offset, extra_data};
 
-			subgroup_node->AddChild(WorldDatabaseNode{subitem});
+			subgroup_node->AddChild(WorldDatabaseNode {subitem});
 		}
 
-		auto ParseSubItems(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* subgroup_node, bool read_presenter_data) -> void
+		auto ParseSubItems(
+			unsigned char** byte_ptr,
+			const unsigned char* end,
+			BinaryTreeNode<WorldDatabaseNode>* subgroup_node,
+			bool read_presenter_data
+		) -> void
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
@@ -59,7 +72,12 @@ namespace libWDB
 			}
 		}
 
-		auto ParseSubGroup(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* group_node, bool read_presenter_data) -> void
+		auto ParseSubGroup(
+			unsigned char** byte_ptr,
+			const unsigned char* end,
+			BinaryTreeNode<WorldDatabaseNode>* group_node,
+			bool read_presenter_data
+		) -> void
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
@@ -67,11 +85,13 @@ namespace libWDB
 				return;
 			}
 
-			BinaryTreeNode<WorldDatabaseNode>* subgroup_node = group_node->AddChild(WorldDatabaseNode{SubGroup{}});
+			BinaryTreeNode<WorldDatabaseNode>* subgroup_node = group_node->AddChild(WorldDatabaseNode {SubGroup {}});
 			ParseSubItems(byte_ptr, end, subgroup_node, read_presenter_data);
 		}
 
-		auto ParseSubGroups(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* group_node) -> void
+		auto ParseSubGroups(
+			unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* group_node
+		) -> void
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
@@ -97,7 +117,7 @@ namespace libWDB
 			const std::uint32_t group_title_length = Uint32FromLEBytes(byte_ptr);
 			const std::string group_title = ASCIIStringFromLEBytes(byte_ptr, group_title_length);
 
-			BinaryTreeNode<WorldDatabaseNode>* bt_node = wdb.AddGroup(Group{group_title});
+			BinaryTreeNode<WorldDatabaseNode>* bt_node = wdb.AddGroup(Group {group_title});
 			ParseSubGroups(byte_ptr, end, bt_node);
 		}
 
@@ -124,8 +144,12 @@ namespace libWDB
 
 		std::vector<unsigned char> data_buffer(filesize, 0);
 
+#if defined(_MSC_VER)
 		const std::size_t bytes_read =
 			fread_s(data_buffer.data(), data_buffer.size(), sizeof(unsigned char), data_buffer.size(), fileptr);
+#else
+		const std::size_t bytes_read = fread(data_buffer.data(), sizeof(unsigned char), data_buffer.size(), fileptr);
+#endif
 
 		if (filesize != bytes_read)
 		{
