@@ -219,7 +219,12 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
+#if defined(_MSC_VER)
 		const errno_t open_error = fopen_s(&fileptr, utf8_bytes.data(), "rb");
+#else
+		fileptr = fopen(utf8_bytes.data(), "rb");
+		const error_t open_error = nullptr == fileptr;
+#endif
 
 		// Check that we actually managed to open the file
 		if (0 != open_error)
@@ -265,7 +270,12 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
-		const errno_t open_error = fopen_s(&fileptr, this->filename->c_str(), "wb");
+#if defined(_MSC_VER)
+		const errno_t open_error = fopen_s(&fileptr, this->filename.value().c_str(), "rb");
+#else
+		fileptr = fopen(this->filename.value().c_str(), "rb");
+		const error_t open_error = nullptr == fileptr;
+#endif
 
 		// Check that we actually managed to open the file
 		if (0 != open_error)
@@ -298,7 +308,12 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
-		const errno_t open_error = fopen_s(&fileptr,utf8_bytes, "wb");
+#if defined(_MSC_VER)
+		const errno_t open_error = fopen_s(&fileptr, utf8_bytes.data(), "rb");
+#else
+		fileptr = fopen(utf8_bytes.data(), "rb");
+		const error_t open_error = nullptr == fileptr;
+#endif
 
 		// Check that we actually managed to open the file
 		if (0 != open_error)

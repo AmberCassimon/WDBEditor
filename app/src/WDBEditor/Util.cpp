@@ -31,7 +31,7 @@ namespace WDBEditor
 			throw std::runtime_error("Failed to fetch \"HOMEPATH\" environment variable!");
 		}
 
-#elif defined(UNIX)
+#elif defined(unix) or defined(__unix) or defined(__unix__)
 		path = std::string {getenv("PATH")};
 #else
 #error                                                                                                                 \
