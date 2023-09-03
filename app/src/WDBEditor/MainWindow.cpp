@@ -6,6 +6,8 @@
 #include "WDBEditor/MainWindow.hpp"
 
 #include <cstdio>
+#include <iomanip>
+#include <sstream>
 
 #include <QDebug>
 #include <QFileDialog>
@@ -419,6 +421,21 @@ namespace WDBEditor
 				{
 					label = QString("Presenter Title:");
 					value = QString::fromStdString(subitem.extra_data->presenter_title);
+
+					this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
+
+					// 37 Unknown Bytes
+					std::stringstream hex_stream;
+					hex_stream << std::uppercase << std::hex << std::setw(2) << std::setfill('0');
+
+					for (std::size_t i = 0; i < subitem.extra_data.value().unknown.size(); ++i)
+					{
+						// unsigned char gets treated like char, to avoid that, cast to int
+						hex_stream << static_cast<int>(subitem.extra_data.value().unknown[i]) << ' ' << std::setw(2);
+					}
+
+					label = QString("Unknown:");
+					value = QString::fromStdString(hex_stream.str());
 
 					this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
 				}
