@@ -12,8 +12,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # Find Qt5, we just need the widgets
-# find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 # Set up our executable
 add_executable(WDBEditor)

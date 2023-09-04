@@ -24,7 +24,7 @@ namespace libWDB
 			char error_buffer[255];
 
 			// _s functions are microsoft extensions
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 			strerror_s(&error_buffer[0], sizeof(error_buffer), errno);
 #else
 			char* error_str = strerror(errno);
@@ -46,7 +46,7 @@ namespace libWDB
 		{
 			char error_buffer[255];
 
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 			strerror_s(&error_buffer[0], sizeof(error_buffer), errno);
 #else
 			char* error_str = strerror(errno);

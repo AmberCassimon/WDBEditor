@@ -144,7 +144,7 @@ namespace libWDB
 
 		std::vector<unsigned char> data_buffer(filesize, 0);
 
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 		const std::size_t bytes_read =
 			fread_s(data_buffer.data(), data_buffer.size(), sizeof(unsigned char), data_buffer.size(), fileptr);
 #else

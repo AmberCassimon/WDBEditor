@@ -219,7 +219,7 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 		const errno_t open_error = fopen_s(&fileptr, utf8_bytes.data(), "rb");
 #else
 		fileptr = fopen(utf8_bytes.data(), "rb");
@@ -270,7 +270,7 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 		const errno_t open_error = fopen_s(&fileptr, this->filename.value().c_str(), "rb");
 #else
 		fileptr = fopen(this->filename.value().c_str(), "rb");
@@ -308,7 +308,7 @@ namespace WDBEditor
 
 		FILE* fileptr;
 
-#if defined(_MSC_VER)
+#if defined(__STDC_WANT_LIB_EXT1__)
 		const errno_t open_error = fopen_s(&fileptr, utf8_bytes.data(), "rb");
 #else
 		fileptr = fopen(utf8_bytes.data(), "rb");
