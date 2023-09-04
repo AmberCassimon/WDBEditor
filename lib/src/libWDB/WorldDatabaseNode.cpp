@@ -34,30 +34,57 @@ namespace libWDB
 		}
 	}
 
-	auto WorldDatabaseNode::GetGroup() const -> std::optional<Group> {
+	auto WorldDatabaseNode::GetGroup() const -> std::optional<std::reference_wrapper<const Group>> {
 		if (!std::holds_alternative<Group>(this->node_data))
 		{
 			return std::nullopt;
 		}
 
-		return std::make_optional<Group>(std::get<Group>(this->node_data));
+		return std::make_optional<std::reference_wrapper<const Group>>(std::get<Group>(this->node_data));
 	}
 
-	auto WorldDatabaseNode::GetSubGroup() const -> std::optional<SubGroup> {
+	auto WorldDatabaseNode::GetGroup() -> std::optional<std::reference_wrapper<Group>> {
+		if (!std::holds_alternative<Group>(this->node_data))
+		{
+			return std::nullopt;
+		}
+
+		return std::make_optional<std::reference_wrapper<Group>>(std::get<Group>(this->node_data));
+	}
+
+	auto WorldDatabaseNode::GetSubGroup() const -> std::optional<std::reference_wrapper<const SubGroup>> {
 		if (!std::holds_alternative<SubGroup>(this->node_data))
 		{
 			return std::nullopt;
 		}
 
-		return std::make_optional<SubGroup>(std::get<SubGroup>(this->node_data));
+		return std::make_optional<std::reference_wrapper<const SubGroup>>(std::get<SubGroup>(this->node_data));
 	}
 
-	auto WorldDatabaseNode::GetSubItem() const -> std::optional<SubItem> {
+	auto WorldDatabaseNode::GetSubGroup() -> std::optional<std::reference_wrapper<SubGroup>> {
+		if (!std::holds_alternative<SubGroup>(this->node_data))
+		{
+			return std::nullopt;
+		}
+
+		return std::make_optional<std::reference_wrapper<SubGroup>>(std::get<SubGroup>(this->node_data));
+	}
+
+	auto WorldDatabaseNode::GetSubItem() const -> std::optional<std::reference_wrapper<const SubItem>> {
 		if (!std::holds_alternative<SubItem>(this->node_data))
 		{
 			return std::nullopt;
 		}
 
-		return std::make_optional<SubItem>(std::get<SubItem>(this->node_data));
+		return std::make_optional<std::reference_wrapper<const SubItem>>(std::get<SubItem>(this->node_data));
+	}
+
+	auto WorldDatabaseNode::GetSubItem() -> std::optional<std::reference_wrapper<SubItem>> {
+		if (!std::holds_alternative<SubItem>(this->node_data))
+		{
+			return std::nullopt;
+		}
+
+		return std::make_optional<std::reference_wrapper<SubItem>>(std::get<SubItem>(this->node_data));
 	}
 } // namespace libWDB

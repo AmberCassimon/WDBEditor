@@ -80,7 +80,7 @@ namespace WDBEditor
 			auto PrepareParameterView() -> QParameterView*;
 
 			// Updating the UI
-			auto UpdateTreeView(libWDB::WorldDatabase&& wdb) -> void;
+			auto UpdateTreeView() -> void;
 
 			auto UpdateWindowTitle() -> void;
 
@@ -95,5 +95,7 @@ namespace WDBEditor
 			void ShowLicense();
 
 			void ShowVersion();
+
+			void ModelChanged();
 	};
 } // namespace WDBEditor

@@ -48,6 +48,13 @@ namespace WDBEditor
 			&QParameterView::ObjectChanged
 		);
 
+		connect(
+			this->parameter_view,
+			&QParameterView::ModelChanged,
+			this,
+			&MainWindow::ModelChanged
+		);
+
 		this->UpdateWindowTitle();
 	}
 
@@ -182,12 +189,6 @@ namespace WDBEditor
 		return param_view;
 	}
 
-	auto MainWindow::UpdateTreeView(libWDB::WorldDatabase&& wdb) -> void
-	{
-		// Update the model
-		this->wdb_model->SetModel(std::move(wdb));
-	}
-
 	auto MainWindow::UpdateWindowTitle() -> void
 	{
 		const QByteArray title("WDBEditor");
@@ -232,15 +233,17 @@ namespace WDBEditor
 
 		try
 		{
-			std::optional<libWDB::WorldDatabase> wdb = libWDB::ParseWDB(fileptr);
+			std::optional<libWDB::WorldDatabase> wdb_opt = libWDB::ParseWDB(fileptr);
 
-			if (wdb.has_value())
+			if (wdb_opt.has_value())
 			{
 				this->filename = std::string {utf8_bytes.data()};
 				this->dirty = false;
 
 				this->UpdateWindowTitle();
-				this->UpdateTreeView(std::move(wdb.value()));
+
+				libWDB::WorldDatabase wdb = std::move(wdb_opt.value());
+				this->wdb_model->SetModel(std::move(wdb));
 			}
 		} catch (libWDB::WDBParseException& wpe)
 		{
@@ -382,5 +385,10 @@ namespace WDBEditor
 		version_dialog.setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse);
 
 		version_dialog.exec();
+	}
+	void MainWindow::ModelChanged() {
+		this->dirty = true;
+
+		this->UpdateWindowTitle();
 	}
 } // namespace WDBEditor

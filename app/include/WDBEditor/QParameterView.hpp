@@ -33,6 +33,15 @@ namespace WDBEditor
 		public slots:
 			void ObjectChanged(const QModelIndex& current_index, const QModelIndex& previous_index);
 
+			void GroupTitleChanged(const QString& text);
+
+			void SubItemTitleChanged(const QString& text);
+
+			void PresenterTitleChanged(const QString& text);
+
+		signals:
+			void ModelChanged();
+
 		private:
 			auto PrepareFormLayout() -> QFormLayout*;
 

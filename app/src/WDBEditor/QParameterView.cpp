@@ -41,6 +41,70 @@ namespace WDBEditor
 		this->ResetParameters();
 	}
 
+	auto QParameterView::GroupTitleChanged(const QString& text) -> void {
+		// We don't care what's in the field, we have nothing selected
+		if (!this->current_selection.has_value())
+		{
+			return;
+		}
+
+		// The current selection is not a group
+		if (libWDB::NodeType::Group != this->current_selection.value()->Data().Type())
+		{
+			return;
+		}
+
+		libWDB::Group& group = this->current_selection.value()->Data().GetGroup()->get();
+		group.title = text.toStdString();
+
+		emit ModelChanged();
+	}
+
+	void QParameterView::SubItemTitleChanged(const QString& text) {
+		// We don't care what's in the field, we have nothing selected
+		if (!this->current_selection.has_value())
+		{
+			return;
+		}
+
+		// The current selection is not a group
+		if (libWDB::NodeType::SubItem != this->current_selection.value()->Data().Type())
+		{
+			return;
+		}
+
+		libWDB::SubItem& subitem = this->current_selection.value()->Data().GetSubItem()->get();
+		subitem.title = text.toStdString();
+
+		emit ModelChanged();
+	}
+
+	void QParameterView::PresenterTitleChanged(const QString& text) {
+		// We don't care what's in the field, we have nothing selected
+		if (!this->current_selection.has_value())
+		{
+			return;
+		}
+
+		// The current selection is not a group
+		if (libWDB::NodeType::SubItem != this->current_selection.value()->Data().Type())
+		{
+			return;
+		}
+
+		libWDB::SubItem& subitem = this->current_selection.value()->Data().GetSubItem()->get();
+
+		if (!subitem.extra_data.has_value())
+		{
+			return;
+		}
+
+		libWDB::SubItemPresenterData& presenter_data = subitem.extra_data.value();
+		presenter_data.presenter_title = text.toStdString();
+
+		emit ModelChanged();
+	}
+
 	auto QParameterView::PrepareFormLayout() -> QFormLayout*
 	{
 		QFormLayout* form_layout = new QFormLayout(this);
@@ -94,9 +158,17 @@ namespace WDBEditor
 
 	auto QParameterView::ResetGroupParameters(const libWDB::Group& group) -> void {
 		const QString label = QString("Group Title:");
-		const QString value = QString::fromStdString(group.title);
 
-		this->form->addRow(new QLabel(label), new QLineEdit(value));
+		QLineEdit* title_edit = new QLineEdit(QString::fromStdString(group.title));
+
+		connect(
+			title_edit,
+			&QLineEdit::textChanged,
+			this,
+			&QParameterView::GroupTitleChanged
+		);
+
+		this->form->addRow(new QLabel(label), title_edit);
 	}
 
 	auto QParameterView::ResetSubGroupParameters(const libWDB::SubGroup& subgroup) -> void {
@@ -105,16 +177,32 @@ namespace WDBEditor
 
 	auto QParameterView::ResetSubItemParameters(const libWDB::SubItem& subitem) -> void {
 		const QString title_label = QString("SubItem Title:");
-		const QString title_value = QString::fromStdString(subitem.title);
 
-		this->form->addRow(new QLabel(title_label), new QLineEdit(title_value));
+		QLineEdit* title_edit = new QLineEdit(QString::fromStdString(subitem.title));
+
+		connect(
+			title_edit,
+			&QLineEdit::textChanged,
+			this,
+			&QParameterView::SubItemTitleChanged
+		);
+
+		this->form->addRow(new QLabel(title_label), title_edit);
 
 		if (subitem.extra_data.has_value())
 		{
 			const QString presenter_title_label = QString("Presenter Title:");
-			const QString presenter_title_value = QString::fromStdString(subitem.extra_data->presenter_title);
 
-			this->form->addRow(new QLabel(presenter_title_label), new QLineEdit(presenter_title_value));
+			QLineEdit* presenter_title_edit = new QLineEdit(QString::fromStdString(subitem.extra_data->presenter_title));
+
+			connect(
+				presenter_title_edit,
+				&QLineEdit::textChanged,
+				this,
+				&QParameterView::PresenterTitleChanged
+			);
+
+			this->form->addRow(new QLabel(presenter_title_label), presenter_title_edit);
 
 			// 37 Unknown Bytes
 			std::stringstream hex_stream;

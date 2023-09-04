@@ -28,11 +28,17 @@ namespace libWDB
 
 			[[nodiscard]] auto Type() const -> NodeType;
 
-			[[nodiscard]] auto GetGroup() const -> std::optional<Group>;
+			[[nodiscard]] auto GetGroup() const -> std::optional<std::reference_wrapper<const Group>>;
 
-			[[nodiscard]] auto GetSubGroup() const -> std::optional<SubGroup>;
+			[[nodiscard]] auto GetGroup() -> std::optional<std::reference_wrapper<Group>>;
 
-			[[nodiscard]] auto GetSubItem() const -> std::optional<SubItem>;
+			[[nodiscard]] auto GetSubGroup() const -> std::optional<std::reference_wrapper<const SubGroup>>;
+
+			[[nodiscard]] auto GetSubGroup() -> std::optional<std::reference_wrapper<SubGroup>>;
+
+			[[nodiscard]] auto GetSubItem() const -> std::optional<std::reference_wrapper<const SubItem>>;
+
+			[[nodiscard]] auto GetSubItem() -> std::optional<std::reference_wrapper<SubItem>>;
 
 		private:
 			std::variant<Group, SubGroup, SubItem> node_data;
