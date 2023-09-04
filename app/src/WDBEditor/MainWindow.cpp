@@ -37,15 +37,15 @@ namespace WDBEditor
 		h_splitter(this->PrepareHSplitter()),
 		wdb_model(new QWorldDatabase()),
 		tree_view(this->PrepareTreeView()),
-		parameter_area(this->PrepareParameterArea())
+		parameter_view(this->PrepareParameterView())
 	{
 		this->tree_view->setModel(this->wdb_model);
 
 		connect(
 			this->tree_view->selectionModel(),
 			&QItemSelectionModel::currentRowChanged,
-			this,
-			&MainWindow::SelectionChanged
+			this->parameter_view,
+			&QParameterView::ObjectChanged
 		);
 
 		this->UpdateWindowTitle();
@@ -174,14 +174,12 @@ namespace WDBEditor
 		return treeView;
 	}
 
-	auto MainWindow::PrepareParameterArea() -> QFormLayout* {
-		QWidget* widget = new QWidget();
+	auto MainWindow::PrepareParameterView() -> QParameterView* {
+		QParameterView* param_view = new QParameterView();
 
-		QFormLayout* form_layout = new QFormLayout(widget);
+		this->h_splitter->addWidget(param_view);
 
-		this->h_splitter->addWidget(widget);
-
-		return form_layout;
+		return param_view;
 	}
 
 	auto MainWindow::UpdateTreeView(libWDB::WorldDatabase&& wdb) -> void
@@ -385,78 +383,4 @@ namespace WDBEditor
 
 		version_dialog.exec();
 	}
-
-	void MainWindow::SelectionChanged(const QModelIndex& index)
-	{
-		if (QModelIndex() == index)
-		{
-			return;
-		}
-
-		libWDB::BinaryTreeNode<libWDB::WorldDatabaseNode>* bt_node =
-			reinterpret_cast<libWDB::BinaryTreeNode<libWDB::WorldDatabaseNode>*>(index.internalPointer());
-
-		// Remove all existing rows
-		// We need to count in reverse, to ensure we always have valid indices
-		// Example: Say we have 2 rows
-		// First iteration removes row 0
-		// Now only 1 row is left at index 0
-		// But our second iteration uses index 1
-		// So it won't remove anything
-		// This does not occur if we iterate in reverse
-		for (int i = this->parameter_area->rowCount() - 1; 0 <= i; --i)
-		{
-			this->parameter_area->removeRow(i);
-		}
-
-		// Add new rows
-		switch(bt_node->Data().Type())
-		{
-			case libWDB::NodeType::Group: {
-				const libWDB::Group group = bt_node->Data().GetGroup().value();
-
-				QString label = QString("Group Title:");
-				QString value = QString::fromStdString(group.title);
-
-				this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
-				break;
-			}
-			case libWDB::NodeType::SubGroup: {
-				break;
-			}
-			case libWDB::NodeType::SubItem: {
-				const libWDB::SubItem subitem = bt_node->Data().GetSubItem().value();
-
-				QString label = QString("SubItem Title:");
-				QString value = QString::fromStdString(subitem.title);
-
-				this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
-
-				if (subitem.extra_data.has_value())
-				{
-					label = QString("Presenter Title:");
-					value = QString::fromStdString(subitem.extra_data->presenter_title);
-
-					this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
-
-					// 37 Unknown Bytes
-					std::stringstream hex_stream;
-					hex_stream << std::uppercase << std::hex << std::setw(2) << std::setfill('0');
-
-					for (std::size_t i = 0; i < subitem.extra_data.value().unknown.size(); ++i)
-					{
-						// unsigned char gets treated like char, to avoid that, cast to int
-						hex_stream << static_cast<int>(subitem.extra_data.value().unknown[i]) << ' ' << std::setw(2);
-					}
-
-					label = QString("Unknown:");
-					value = QString::fromStdString(hex_stream.str());
-
-					this->parameter_area->addRow(new QLabel(label), new QLineEdit(value));
-				}
-				break;
-			}
-		}
-	}
-
 } // namespace WDBEditor
