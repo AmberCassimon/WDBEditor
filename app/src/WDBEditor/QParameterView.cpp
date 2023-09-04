@@ -118,18 +118,32 @@ namespace WDBEditor
 
 			// 37 Unknown Bytes
 			std::stringstream hex_stream;
+			std::stringstream mask_stream;
 			hex_stream << std::uppercase << std::hex << std::setw(2) << std::setfill('0');
 
 			for (std::size_t i = 0; i < subitem.extra_data.value().unknown.size(); ++i)
 			{
 				// unsigned char gets treated like char, to avoid that, cast to int
-				hex_stream << static_cast<int>(subitem.extra_data.value().unknown[i]) << ' ' << std::setw(2);
+				hex_stream << static_cast<int>(subitem.extra_data.value().unknown[i]);
+				mask_stream << "HH";
+
+				if ((i + 1) < subitem.extra_data.value().unknown.size())
+				{
+					hex_stream << ' ' << std::setw(2);
+					mask_stream << ' ';
+				}
 			}
+
+			mask_stream << ';';
 
 			const QString unknown_label = QString("Unknown:");
 			const QString unknown_value = QString::fromStdString(hex_stream.str());
 
-			this->form->addRow(new QLabel(unknown_label), new QLineEdit(unknown_value));
+			QLineEdit* unknown_editor = new QLineEdit(unknown_value);
+			unknown_editor->setMaxLength((subitem.extra_data.value().unknown.size() * 2) + (subitem.extra_data.value().unknown.size() - 1));
+			unknown_editor->setInputMask(QString::fromStdString(mask_stream.str()));
+
+			this->form->addRow(new QLabel(unknown_label), unknown_editor);
 		}
 	}
 } // namespace WDBEditor
