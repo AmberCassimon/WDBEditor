@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include <QDebug>
+#include <QHeaderView>
 #include <QFileDialog>
 #include <QFileSystemModel>
 #include <QMenuBar>
@@ -39,6 +40,8 @@ namespace WDBEditor
 		tree_view(this->PrepareTreeView()),
 		parameter_view(this->PrepareParameterView())
 	{
+		this->resize(MainWindow::INITIAL_SIZE);
+
 		this->tree_view->setModel(this->wdb_model);
 
 		connect(
@@ -54,6 +57,8 @@ namespace WDBEditor
 			this,
 			&MainWindow::ModelChanged
 		);
+
+		this->h_splitter->setSizes({INT_MAX, INT_MAX});
 
 		this->UpdateWindowTitle();
 	}
@@ -175,6 +180,7 @@ namespace WDBEditor
 		treeView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 		treeView->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 		treeView->setAlternatingRowColors(true);
+		treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 		this->h_splitter->addWidget(treeView);
 
