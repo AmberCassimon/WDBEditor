@@ -171,7 +171,7 @@ namespace WDBEditor
 			case libWDB::NodeType::Group: {
 				if (0 == index.column())
 				{
-					return QString::fromStdString(bt_node->Data().GetGroup().value().title);
+					return QString::fromStdString(bt_node->Data().GetGroup().value().get().title);
 				}
 				else
 				{
@@ -192,15 +192,15 @@ namespace WDBEditor
 				switch(index.column())
 				{
 					case 0: {
-						return QString::fromStdString(bt_node->Data().GetSubItem().value().title);
+						return QString::fromStdString(bt_node->Data().GetSubItem().value().get().title);
 					}
 
 					case 1: {
-						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().offset));
+						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().offset));
 					}
 
 					case 2: {
-						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().size));
+						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().size));
 					}
 
 					default:

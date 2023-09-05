@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(WDBEditor VERSION 1.1.0 LANGUAGES CXX)
+project(WDBEditor VERSION 1.2.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,8 +12,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # Find Qt5, we just need the widgets
-# find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 # Set up our executable
 add_executable(WDBEditor)

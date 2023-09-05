@@ -15,15 +15,14 @@
 #include <QSplitter>
 #include <QTreeView>
 
-#include "WDBEditor/PresenterParams.hpp"
+#include "WDBEditor/QParameterView.hpp"
 #include "WDBEditor/QWorldDatabase.hpp"
-
 
 namespace WDBEditor
 {
-	class MainWindow final: public QMainWindow
+	class MainWindow final : public QMainWindow
 	{
-			//NOLINTNEXTLINE
+			// NOLINTNEXTLINE
 			Q_OBJECT;
 
 		public:
@@ -54,8 +53,7 @@ namespace WDBEditor
 			QWorldDatabase* wdb_model {nullptr};
 			QTreeView* tree_view {nullptr};
 
-			// Parameter Grid
-			QFormLayout* parameter_area;
+			QParameterView* parameter_view {nullptr};
 
 			// Setup for UI
 			// Prepare Actions
@@ -79,10 +77,10 @@ namespace WDBEditor
 
 			auto PrepareTreeView() -> QTreeView*;
 
-			auto PrepareParameterArea() -> QFormLayout*;
+			auto PrepareParameterView() -> QParameterView*;
 
 			// Updating the UI
-			auto UpdateTreeView(libWDB::WorldDatabase&& wdb) -> void;
+			auto UpdateTreeView() -> void;
 
 			auto UpdateWindowTitle() -> void;
 
@@ -98,6 +96,6 @@ namespace WDBEditor
 
 			void ShowVersion();
 
-			void SelectionChanged(const QModelIndex& index);
+			void ModelChanged();
 	};
 } // namespace WDBEditor
