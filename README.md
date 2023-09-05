@@ -14,7 +14,7 @@ Any edits made to the parameters shown in the application are saved and can be r
 2. ~~Add UI support for more missing fields (Unknown 37 bytes in presenter info, for instance)~~ (Unknown field has been added, data chunks come later)
 3. ~~Add support for actually editing fields, rather than just showing them~~ (All currently parsed fields can be edited, and are serialized correctly)
 4. ~~Make some changes to main window so its initial size, as well as the division between it and the parameter view are more acceptable.~~
-5. Fix bug related to an extra NULL terminator being parsed and present in edit fields?
+5. ~~Fix bug related to an extra NULL terminator being parsed and present in edit fields?~~
 6. Add support for the loose GIF chunk
 7. Add support for the loose model chunk
 8. Show binary data for per-subitem data

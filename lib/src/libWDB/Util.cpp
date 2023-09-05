@@ -87,8 +87,9 @@ namespace libWDB
 
 	auto ASCIIStringFromLEBytes(unsigned char** ptr, std::uint32_t length) -> std::string
 	{
-		std::string string {*ptr, *ptr + length};
-		*ptr += length;
+		// WDB format includes NULL terminator, std::string doesn't need this
+		std::string string {reinterpret_cast<const char*>(*ptr), length - 1};
+		*ptr += length;	// We still "read" the 5th byte, so we need to increment the pointer past it
 
 		return string;
 	}
@@ -126,13 +127,14 @@ namespace libWDB
 
 	auto ASCIIStringToLEBytes(const std::string& str, FILE* fileptr) -> void
 	{
+		// +1 to make sure we also write the NULL terminator
 		const int chars_written = fwrite(
 			str.c_str(),
 			sizeof(char),
-			str.size(),
+			str.size() + 1,
 			fileptr
 		);
 
-		assert(str.size() == chars_written);
+		assert((str.size() + 1) == chars_written);
 	}
 } // namespace libWDB

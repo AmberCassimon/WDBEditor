@@ -20,7 +20,8 @@ namespace libWDB
 		) -> void
 		{
 			// Title size + string
-			Uint32ToLEBytes(static_cast<std::uint32_t>(presenter_data.presenter_title.size()), fileptr);
+			// Add 1 for NULL terminator
+			Uint32ToLEBytes(static_cast<std::uint32_t>(presenter_data.presenter_title.size()) + 1, fileptr);
 			ASCIIStringToLEBytes(presenter_data.presenter_title, fileptr);
 
 			std::vector<unsigned char> byte_vec;
@@ -42,7 +43,8 @@ namespace libWDB
 			const SubItem subitem = subitem_node->Data().GetSubItem().value();
 
 			// Title size + string
-			Uint32ToLEBytes(static_cast<std::uint32_t>(subitem.title.size()), fileptr);
+			// Add 1 for NULL terminator
+			Uint32ToLEBytes(static_cast<std::uint32_t>(subitem.title.size()) + 1, fileptr);
 			ASCIIStringToLEBytes(subitem.title, fileptr);
 
 			// Size and offset of subitem
@@ -107,7 +109,8 @@ namespace libWDB
 			const Group group = group_node->Data().GetGroup().value();
 
 			// String length + string
-			Uint32ToLEBytes(static_cast<std::uint32_t>(group.title.size()), fileptr);
+			// Add 1 for NULL terminator
+			Uint32ToLEBytes(static_cast<std::uint32_t>(group.title.size()) + 1, fileptr);
 			ASCIIStringToLEBytes(group.title, fileptr);
 
 			SaveSubGroups(group_node, fileptr);
