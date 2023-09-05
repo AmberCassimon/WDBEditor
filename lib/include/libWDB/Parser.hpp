@@ -28,6 +28,8 @@ namespace libWDB
 		auto ParseGroup(unsigned char** current, const unsigned char* end, WorldDatabase& wdb) -> void;
 
 		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
+
+		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
 	} // namespace __detail
 
 	auto ParseWDB(FILE* fileptr) -> WorldDatabase;

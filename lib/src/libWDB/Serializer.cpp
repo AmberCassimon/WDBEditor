@@ -121,10 +121,32 @@ namespace libWDB
 			FILE* fileptr
 		) -> void
 		{
+			// Write the number of groups
+			Uint32ToLEBytes(
+				static_cast<std::uint32_t>(database.Groups().size()),
+				fileptr
+			);
+
 			for (const BinaryTreeNode<WorldDatabaseNode>* bt_node: database.Groups())
 			{
 				SaveGroup(bt_node, fileptr);
 			}
+		}
+
+		auto SaveLooseGIFChunk(
+			const WorldDatabase& database,
+			FILE* fileptr
+		) -> void
+		{
+			if (!database.LooseGIFChunk().has_value())
+			{
+				return;
+			}
+
+			const GIFChunk& gif_chunk = database.LooseGIFChunk()->get();
+
+			Uint32ToLEBytes(static_cast<std::uint32_t>(gif_chunk.gif_data.size()), fileptr);
+			ByteArrayToLEBytes(gif_chunk.gif_data, fileptr);
 		}
 	} // namespace __detail
 
@@ -133,12 +155,7 @@ namespace libWDB
 		FILE* fileptr
 	) -> void
 	{
-		// Write the number of groups
-		Uint32ToLEBytes(
-			static_cast<std::uint32_t>(database.Groups().size()),
-			fileptr
-		);
-
 		__detail::SaveGroups(database, fileptr);
+		__detail::SaveLooseGIFChunk(database, fileptr);
 	}
 } // namespace libWDB

@@ -9,11 +9,13 @@
 
 namespace libWDB
 {
-	WorldDatabase::WorldDatabase(WorldDatabase&& wdb) noexcept: first_group(wdb.first_group){
+	WorldDatabase::WorldDatabase(WorldDatabase&& wdb) noexcept: first_group(wdb.first_group)
+	{
 		wdb.first_group = std::nullopt;
 	}
 
-	auto WorldDatabase::operator=(WorldDatabase&& wdb) noexcept -> WorldDatabase& {
+	auto WorldDatabase::operator=(WorldDatabase&& wdb) noexcept -> WorldDatabase&
+	{
 		this->first_group = wdb.first_group;
 		wdb.first_group = std::nullopt;
 
@@ -48,7 +50,7 @@ namespace libWDB
 	{
 		if (!this->first_group.has_value())
 		{
-			return std::vector<const BinaryTreeNode<WorldDatabaseNode>*>{};
+			return std::vector<const BinaryTreeNode<WorldDatabaseNode>*> {};
 		}
 
 		std::vector<const BinaryTreeNode<WorldDatabaseNode>*> groups;
@@ -56,12 +58,36 @@ namespace libWDB
 		assert(NodeType::Group == this->first_group.value()->Data().Type());
 		groups.push_back(this->first_group.value());
 
-		for (const BinaryTreeNode<WorldDatabaseNode>* bt_node: this->first_group.value()->Siblings())
+		for (const BinaryTreeNode<WorldDatabaseNode>* bt_node : this->first_group.value()->Siblings())
 		{
 			assert(NodeType::Group == bt_node->Data().Type());
 			groups.push_back(bt_node);
 		}
 
 		return groups;
+	}
+
+	auto WorldDatabase::LooseGIFChunk() const -> std::optional<std::reference_wrapper<const GIFChunk>>
+	{
+		if (!this->loose_gif_chunk.has_value())
+		{
+			return std::nullopt;
+		}
+
+		return std::make_optional<std::reference_wrapper<const GIFChunk>>(this->loose_gif_chunk.value());
+	}
+
+	auto WorldDatabase::LooseGIFChunk() -> std::optional<std::reference_wrapper<GIFChunk>>
+	{
+		if (!this->loose_gif_chunk.has_value())
+		{
+			return std::nullopt;
+		}
+
+		return std::make_optional<std::reference_wrapper<GIFChunk>>(this->loose_gif_chunk.value());
+	}
+
+	auto WorldDatabase::SetLooseGIFChunk(GIFChunk&& new_gif_chunk) -> void {
+		this->loose_gif_chunk = std::make_optional<GIFChunk>(new_gif_chunk);
 	}
 } // namespace libWDB

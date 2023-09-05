@@ -47,6 +47,11 @@ namespace libWDB
 			const WorldDatabase& database,
 			FILE* fileptr
 		) -> void;
+
+		auto SaveLooseGIFChunk(
+			const WorldDatabase& database,
+			FILE* fileptr
+		) -> void;
 	} // namespace __detail
 
 	auto Save(
