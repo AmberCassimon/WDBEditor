@@ -1,0 +1,70 @@
+# Largely based on mattkc's CI pipeline for his SI editor
+# See: https://github.com/itsmattkc/SIEdit/blob/master/.github/workflows/ci.yml
+
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "README.md"
+      - ".clang-format"
+      - ".clang-tidy"
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "README.md"
+      - ".clang-format"
+      - ".clang-tidy"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Developer Command Prompt for Microsoft Visual C++
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake . -G Ninja -DCMAKE_BUILD_TYPE=Release
+          ninja
+
+      # - name: Deploy
+      #   shell: bash
+      #   run: |
+      #     mkdir deploy
+      #     cp app/*.exe deploy
+      #     cp lib/*.dll deploy
+      #     cd deploy
+      #     windeployqt si-edit.exe libweaver.dll
+      #
+      # - name: Upload Build Artifact
+      #   uses: actions/upload-artifact@v2.2.1
+      #   with:
+      #     path:
+      #       deploy
+      #
+      # - name: Upload to Releases
+      #   shell: bash
+      #   if: github.event_name == 'push'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     TRAVIS_REPO_SLUG: itsmattkc/libweaver
+      #     TRAVIS_COMMIT: ${{ github.sha }}
+      #   run: |
+      #     cd deploy
+      #     7z a libweaver.zip *
+      #     curl -fLOSs --retry 2 --retry-delay 60 https://github.com/probonopd/uploadtool/raw/master/upload.sh
+      #     ./upload.sh libweaver.zip
