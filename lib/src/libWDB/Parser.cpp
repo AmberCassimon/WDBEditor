@@ -136,6 +136,22 @@ namespace libWDB
 				ParseGroup(byte_ptr, end, wdb);
 			}
 		}
+
+		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void
+		{
+			// We're at the end of the buffer
+			if (end <= (*byte_ptr))
+			{
+				return;
+			}
+
+			const std::uint32_t gif_chunk_bytes = Uint32FromLEBytes(byte_ptr);
+			GIFChunk loose_gif_chunk {
+				ByteArrayFromLEBytes(byte_ptr, gif_chunk_bytes)
+			};
+
+			wdb.SetLooseGIFChunk(std::move(loose_gif_chunk));
+		}
 	} // namespace __detail
 
 	auto ParseWDB(FILE* fileptr) -> WorldDatabase
@@ -159,9 +175,12 @@ namespace libWDB
 		unsigned char* buffer_start = data_buffer.data();
 		const unsigned char* buffer_end = buffer_start + data_buffer.size();
 
+		unsigned char* in_progress_ptr = buffer_start;
+
 		WorldDatabase wdb;
 
-		__detail::ParseGroups(&buffer_start, buffer_end, wdb);
+		__detail::ParseGroups(&in_progress_ptr, buffer_end, wdb);
+		__detail::ParseLooseGIFChunk(&in_progress_ptr, buffer_end, wdb);
 
 		return wdb;
 	}

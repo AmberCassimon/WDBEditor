@@ -5,7 +5,10 @@
 
 #pragma once
 
+#include <optional>
+
 #include "libWDB/BinaryTreeNode.hpp"
+#include "libWDB/GIFChunk.hpp"
 #include "libWDB/Group.hpp"
 #include "libWDB/WorldDatabaseNode.hpp"
 
@@ -13,6 +16,8 @@ namespace libWDB
 {
 	// At least partially based on:
 	// http://fileformats.archiveteam.org/wiki/Lego_Island_World_Database
+	// WDBRipper has also been a great help:
+	// https://github.com/LiamBrandt/WDBRipper/
 	class WorldDatabase
 	{
 		public:
@@ -32,7 +37,15 @@ namespace libWDB
 
 			[[nodiscard]] auto Groups() const -> std::vector<const BinaryTreeNode<WorldDatabaseNode>*>;
 
+			[[nodiscard]] auto LooseGIFChunk() const -> std::optional<std::reference_wrapper<const GIFChunk>>;
+
+			[[nodiscard]] auto LooseGIFChunk() -> std::optional<std::reference_wrapper<GIFChunk>>;
+
+			auto SetLooseGIFChunk(GIFChunk&& new_gif_chunk) -> void;
+
 		private:
 			std::optional<BinaryTreeNode<WorldDatabaseNode>*> first_group {std::nullopt};
+
+			std::optional<GIFChunk> loose_gif_chunk {std::nullopt};
 	};
 } // namespace libWDB
