@@ -25,3 +25,9 @@ Any edits made to the parameters shown in the application are saved and can be r
 13. Parse per-subitem data (Without reconstruction, but with 1:1 binary copy into the saved file)
 14. Reconstruct per-subitem data (Rather than just copying the bytes 1:1)
 15. Add support for replacing actual assets (This will be worked out further when I get closer to this)
+
+## Useful Resources
+These are some resources I found useful while working on this tool.
+
+- fileformats.archiveteam.org has [a very nice write-up](http://fileformats.archiveteam.org/wiki/Lego_Island_World_Database) on the .wdb file format.
+- [WDBRipper](https://github.com/LiamBrandt/WDBRipper/) is a Python tool that can be used to extract a good chunk (Around 400/600 on my system at the time of writing) of the assets contained in WORLD.wdb
