@@ -13,7 +13,7 @@ Any edits made to the parameters shown in the application are saved and can be r
 1. ~~Add Serialization logic so files can be saved again after editing~~ (The fields that are being parsed are being reconstructed correctly, however, not all data is being parsed currently, of course)
 2. ~~Add UI support for more missing fields (Unknown 37 bytes in presenter info, for instance)~~ (Unknown field has been added, data chunks come later)
 3. ~~Add support for actually editing fields, rather than just showing them~~ (All currently parsed fields can be edited, and are serialized correctly)
-4. Make some changes to main window so its initial size, as well as the division between it and the parameter view are more acceptable.
+4. ~~Make some changes to main window so its initial size, as well as the division between it and the parameter view are more acceptable.~~
 5. Fix bug related to an extra NULL terminator being parsed and present in edit fields?
 6. Add support for the loose GIF chunk
 7. Add support for the loose model chunk
