@@ -5,6 +5,7 @@
 
 #include "WDBEditor/QParameterView.hpp"
 
+#include <charconv>
 #include <iomanip>
 #include <sstream>
 
@@ -101,6 +102,62 @@ namespace WDBEditor
 
 		libWDB::SubItemPresenterData& presenter_data = subitem.extra_data.value();
 		presenter_data.presenter_title = text.toStdString();
+
+		emit ModelChanged();
+	}
+
+	void QParameterView::UnknownPresenterBytesChanged(const QString& text) {
+		// We don't care what's in the field, we have nothing selected
+		if (!this->current_selection.has_value())
+		{
+			return;
+		}
+
+		// The current selection is not a group
+		if (libWDB::NodeType::SubItem != this->current_selection.value()->Data().Type())
+		{
+			return;
+		}
+
+		libWDB::SubItem& subitem = this->current_selection.value()->Data().GetSubItem()->get();
+
+		if (!subitem.extra_data.has_value())
+		{
+			return;
+		}
+
+		// First, parse the string and check that all the bytes are there
+		std::stringstream sstream {text.toStdString()};
+		std::string line;
+
+		std::vector<unsigned char> byte_vals {};
+		byte_vals.reserve(37);	// Reserve, but don't resize, so we can check the actual size
+
+		while (std::getline(sstream, line, ' '))
+		{
+			const char* c_str = line.c_str();
+			const char* c_str_end = c_str + line.length();
+
+			unsigned char byte = 0;
+
+			const std::from_chars_result res = std::from_chars(c_str, c_str_end, byte, 16);
+
+			// Something went wrong in parsing
+			if (std::errc{} != res.ec)
+			{
+				return;
+			}
+
+			byte_vals.push_back(byte);
+		}
+
+		// We didn't get all bytes
+		if (37 != byte_vals.size())
+		{
+			return;
+		}
+
+		std::copy(byte_vals.begin(), byte_vals.end(), subitem.extra_data.value().unknown.begin());
 
 		emit ModelChanged();
 	}
@@ -230,6 +287,13 @@ namespace WDBEditor
 			QLineEdit* unknown_editor = new QLineEdit(unknown_value);
 			unknown_editor->setMaxLength((subitem.extra_data.value().unknown.size() * 2) + (subitem.extra_data.value().unknown.size() - 1));
 			unknown_editor->setInputMask(QString::fromStdString(mask_stream.str()));
+
+			connect(
+				unknown_editor,
+				&QLineEdit::textChanged,
+				this,
+				&QParameterView::UnknownPresenterBytesChanged
+			);
 
 			this->form->addRow(new QLabel(unknown_label), unknown_editor);
 		}

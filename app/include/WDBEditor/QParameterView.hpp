@@ -39,6 +39,8 @@ namespace WDBEditor
 
 			void PresenterTitleChanged(const QString& text);
 
+			void UnknownPresenterBytesChanged(const QString& text);
+
 		signals:
 			void ModelChanged();
 
