@@ -18,7 +18,7 @@ The loose GIF chunk is currently not reconstructed yet, and is not yet visible i
 5. ~~Fix bug related to an extra NULL terminator being parsed and present in edit fields?~~
 6. ~~Parse loose GIF Chunk~~ (We currently just read the straight binary data, and don't parse the content)
 7. ~~Serialize loose GIF Chunk~~ (We currently just dump the full binary data, without parsing the contents)
-8. Add CI pipeline
+8. ~~Add CI pipeline~~
 9. Parse loose model Chunk
 10. Serialize loose model Chunk
 11. Parse loose GIF Chunk contents
