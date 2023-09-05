@@ -3,21 +3,24 @@
 
 name: CI
 
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths-ignore:
+#       - "README.md"
+#       - ".clang-format"
+#       - ".clang-tidy"
+#   pull_request:
+#     branches:
+#       - master
+#    paths-ignore:
+#       - "README.md"
+#      - ".clang-format"
+#       - ".clang-tidy"
+
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - "README.md"
-      - ".clang-format"
-      - ".clang-tidy"
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - "README.md"
-      - ".clang-format"
-      - ".clang-tidy"
+  push
 
 jobs:
   build:
