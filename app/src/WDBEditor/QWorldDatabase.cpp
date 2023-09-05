@@ -32,7 +32,7 @@ namespace WDBEditor
 	{
 		if ((Qt::Horizontal == orientation) && (Qt::DisplayRole == role))
 		{
-			std::array<QString, 3> sections {"Title", "Offset", "Size"};
+			std::array<QString, 4> sections {"Title", "Offset", "Size", ""};
 
 			if (sections.size() <= section)
 			{
@@ -58,7 +58,7 @@ namespace WDBEditor
 		return static_cast<int>(parent_ptr->Children().size());
 	}
 
-	auto QWorldDatabase::columnCount(const QModelIndex& parent) const -> int { return 3; }
+	auto QWorldDatabase::columnCount(const QModelIndex& parent) const -> int { return 4; }
 
 	auto QWorldDatabase::index(int row, int column, const QModelIndex& parent) const -> QModelIndex
 	{
@@ -145,8 +145,11 @@ namespace WDBEditor
 			}
 
 			return this->createIndex(
-				/* Column must be 0 here, since regardless of the column that is clicked, the parent is always in the first (tree) column */
-				row, 0, const_cast<libWDB::BinaryTreeNode<libWDB::WorldDatabaseNode>*>(parent_ptr)
+				/* Column must be 0 here, since regardless of the column that is clicked, the parent is always in the
+				   first (tree) column */
+				row,
+				0,
+				const_cast<libWDB::BinaryTreeNode<libWDB::WorldDatabaseNode>*>(parent_ptr)
 			);
 		}
 		else
@@ -157,9 +160,19 @@ namespace WDBEditor
 
 	auto QWorldDatabase::data(const QModelIndex& index, int role) const -> QVariant
 	{
-		if (Qt::DisplayRole != role)
+		if ((Qt::DisplayRole != role) && (Qt::TextAlignmentRole != role))
 		{
 			return QVariant();
+		}
+
+		if (Qt::TextAlignmentRole == role)
+		{
+			if (0 < index.column())
+			{
+				return Qt::AlignRight;
+			}
+
+			return Qt::AlignLeft;
 		}
 
 		// Get the node
@@ -189,14 +202,15 @@ namespace WDBEditor
 				}
 			}
 			case libWDB::NodeType::SubItem: {
-				switch(index.column())
+				switch (index.column())
 				{
 					case 0: {
 						return QString::fromStdString(bt_node->Data().GetSubItem().value().get().title);
 					}
 
 					case 1: {
-						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().offset));
+						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().offset)
+						);
 					}
 
 					case 2: {
@@ -206,7 +220,6 @@ namespace WDBEditor
 					default:
 						return QVariant();
 				}
-
 			}
 		}
 

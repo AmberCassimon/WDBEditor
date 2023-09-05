@@ -31,6 +31,8 @@ namespace WDBEditor
 			~MainWindow() final;
 
 		private:
+			constexpr static QSize INITIAL_SIZE = QSize(800, 600);
+
 			// Model
 			bool dirty {false};
 			std::optional<std::string> filename {std::nullopt};
