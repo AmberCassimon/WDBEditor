@@ -44,21 +44,21 @@ jobs:
           cmake . -G Ninja -DCMAKE_BUILD_TYPE=Release
           ninja
 
-      # - name: Deploy
-      #   shell: bash
-      #   run: |
-      #     mkdir deploy
-      #     cp app/*.exe deploy
-      #     cp lib/*.dll deploy
-      #     cd deploy
-      #     windeployqt si-edit.exe libweaver.dll
-      #
-      # - name: Upload Build Artifact
-      #   uses: actions/upload-artifact@v2.2.1
-      #   with:
-      #     path:
-      #       deploy
-      #
+      - name: Deploy
+        shell: bash
+        run: |
+          mkdir deploy
+          cp app/*.exe deploy
+          cp lib/*.dll deploy
+          cd deploy
+          windeployqt WDBEditor.exe WDB.lib
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2.2.1
+        with:
+          path:
+            deploy
+
       # - name: Upload to Releases
       #   shell: bash
       #   if: github.event_name == 'push'
