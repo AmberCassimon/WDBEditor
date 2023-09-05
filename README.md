@@ -15,9 +15,13 @@ Any edits made to the parameters shown in the application are saved and can be r
 3. ~~Add support for actually editing fields, rather than just showing them~~ (All currently parsed fields can be edited, and are serialized correctly)
 4. ~~Make some changes to main window so its initial size, as well as the division between it and the parameter view are more acceptable.~~
 5. ~~Fix bug related to an extra NULL terminator being parsed and present in edit fields?~~
-6. Add support for the loose GIF chunk
-7. Add support for the loose model chunk
-8. Show binary data for per-subitem data
-9. Parse per-subitem data (Without reconstruction, but with 1:1 binary copy into the saved file)
-10. Reconstruct per-subitem data (Rather than just copying the bytes 1:1)
-11. Add support for replacing actual assets (This will be worked out further when I get closer to this)
+6. Parse loose GIF Chunk
+7. Parse loose model Chunk
+8. Serialize loose GIF Chunk
+9. Serialize loose model Chunk
+10. Show loose GIF Chunk in UI
+11. Show loose model Chunk in UI
+12. Show binary data for per-subitem data
+13. Parse per-subitem data (Without reconstruction, but with 1:1 binary copy into the saved file)
+14. Reconstruct per-subitem data (Rather than just copying the bytes 1:1)
+15. Add support for replacing actual assets (This will be worked out further when I get closer to this)
