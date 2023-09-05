@@ -51,7 +51,7 @@ jobs:
           cp WDBEditor.exe deploy
           cp WDB.lib deploy
           cd deploy
-          windeployqt WDBEditor.exe WDB.lib
+          windeployqt WDBEditor.exe
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v2.2.1
