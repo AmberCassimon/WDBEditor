@@ -13,6 +13,8 @@ namespace libWDB
 {
 	// At least partially based on:
 	// http://fileformats.archiveteam.org/wiki/Lego_Island_World_Database
+	// WDBRipper has also been a great help:
+	// https://github.com/LiamBrandt/WDBRipper/
 	class WorldDatabase
 	{
 		public:
