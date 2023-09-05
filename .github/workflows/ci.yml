@@ -48,8 +48,8 @@ jobs:
         shell: bash
         run: |
           mkdir deploy
-          cp app/*.exe deploy
-          cp lib/*.dll deploy
+          cp WDBEditor.exe deploy
+          cp WDB.lib deploy
           cd deploy
           windeployqt WDBEditor.exe WDB.lib
 
