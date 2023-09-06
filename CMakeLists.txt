@@ -24,3 +24,4 @@ target_link_libraries(WDBEditor PRIVATE WDB Qt5::Widgets)
 
 add_subdirectory(app)
 add_subdirectory(lib)
+add_subdirectory(test)
