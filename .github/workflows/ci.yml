@@ -59,6 +59,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v2.2.1
         with:
+          name: WDBEditor.zip
           path:
             deploy
 
@@ -127,8 +128,9 @@ jobs:
           python3 "tools/compare.py" "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB" > reconstruction-report.txt
 
         # Upload the reconstruction report
-      - name: Upload Build Artifact
+      - name: Upload Reconstruction Report
         uses: actions/upload-artifact@v2.2.1
         with:
+          name: reconstruction-report.txt
           path:
             reconstruction-report.txt
