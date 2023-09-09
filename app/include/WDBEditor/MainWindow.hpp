@@ -15,8 +15,7 @@
 #include <QSplitter>
 #include <QTreeView>
 
-#include "WDBEditor/QParameterView.hpp"
-#include "WDBEditor/QWorldDatabase.hpp"
+#include "WDBEditor/QStructureView.hpp"
 
 namespace WDBEditor
 {
@@ -49,13 +48,9 @@ namespace WDBEditor
 			QMenu* about_menu {nullptr};
 
 			// Main UI
-			QSplitter* h_splitter;
+			QTabWidget* tab_widget;
 
-			// Tree View
-			QWorldDatabase* wdb_model {nullptr};
-			QTreeView* tree_view {nullptr};
-
-			QParameterView* parameter_view {nullptr};
+			QStructureView* structure_view {nullptr};
 
 			// Setup for UI
 			// Prepare Actions
@@ -74,16 +69,12 @@ namespace WDBEditor
 
 			auto PrepareAboutMenu() -> QMenu*;
 
-			// Prepare UI Elements
-			auto PrepareHSplitter() -> QSplitter*;
+			// Prepare Main UI
+			auto PrepareTabWidget() -> QTabWidget*;
 
-			auto PrepareTreeView() -> QTreeView*;
-
-			auto PrepareParameterView() -> QParameterView*;
+			auto PrepareStructureView() -> QStructureView*;
 
 			// Updating the UI
-			auto UpdateTreeView() -> void;
-
 			auto UpdateWindowTitle() -> void;
 
 			// Methods invoked when menu items are pressed

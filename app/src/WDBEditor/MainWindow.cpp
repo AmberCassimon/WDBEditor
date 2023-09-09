@@ -9,9 +9,9 @@
 #include <sstream>
 
 #include <QDebug>
-#include <QHeaderView>
 #include <QFileDialog>
 #include <QFileSystemModel>
+#include <QHeaderView>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QString>
@@ -34,30 +34,12 @@ namespace WDBEditor
 		show_version_act(this->PrepareShowVersionAction()),
 		file_menu(this->PrepareFileMenu()),
 		about_menu(this->PrepareAboutMenu()),
-		h_splitter(this->PrepareHSplitter()),
-		wdb_model(new QWorldDatabase()),
-		tree_view(this->PrepareTreeView()),
-		parameter_view(this->PrepareParameterView())
+		tab_widget(this->PrepareTabWidget()),
+		structure_view(this->PrepareStructureView())
 	{
 		this->resize(MainWindow::INITIAL_SIZE);
 
-		this->tree_view->setModel(this->wdb_model);
-
-		connect(
-			this->tree_view->selectionModel(),
-			&QItemSelectionModel::currentRowChanged,
-			this->parameter_view,
-			&QParameterView::ObjectChanged
-		);
-
-		connect(
-			this->parameter_view,
-			&QParameterView::ModelChanged,
-			this,
-			&MainWindow::ModelChanged
-		);
-
-		this->h_splitter->setSizes({INT_MAX, INT_MAX});
+		connect(this->parameter_view, &QParameterView::ModelChanged, this, &MainWindow::ModelChanged);
 
 		this->UpdateWindowTitle();
 	}
@@ -74,11 +56,7 @@ namespace WDBEditor
 		delete this->show_license_act;
 		delete this->show_version_act;
 
-		// Delete Main UI
-		// Deleting splitter also deletes tree view
-		delete this->h_splitter;
-
-		delete this->wdb_model;
+		delete this->structure_view;
 
 		// Underlying model data
 		this->dirty = false;
@@ -131,7 +109,8 @@ namespace WDBEditor
 		return showLicenseAction;
 	}
 
-	auto MainWindow::PrepareShowVersionAction() -> QAction* {
+	auto MainWindow::PrepareShowVersionAction() -> QAction*
+	{
 		QAction* showVersionAction = new QAction("&Version", this);
 
 		showVersionAction->setStatusTip("Show the software version");
@@ -162,36 +141,20 @@ namespace WDBEditor
 		return aboutMenu;
 	}
 
-	auto MainWindow::PrepareHSplitter() -> QSplitter*
-	{
-		QSplitter* splitter = new QSplitter(Qt::Orientation::Horizontal);
-		splitter->setChildrenCollapsible(false);
+	auto MainWindow::PrepareTabWidget() -> QTabWidget* {
+		QTabWidget* tab_widget = new QTabWidget();
 
-		this->setCentralWidget(splitter);
+		this->setCentralWidget(tab_widget);
 
-		return splitter;
+		return tab_widget;
 	}
 
-	auto MainWindow::PrepareTreeView() -> QTreeView*
-	{
-		QTreeView* treeView = new QTreeView(this->h_splitter);
-		treeView->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
-		treeView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
-		treeView->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
-		treeView->setAlternatingRowColors(true);
-		treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	auto MainWindow::PrepareStructureView() -> QStructureView* {
+		QStructureView* structureView = new QStructureView();
 
-		this->h_splitter->addWidget(treeView);
+		this->tab_widget->addTab(structureView, "Structure");
 
-		return treeView;
-	}
-
-	auto MainWindow::PrepareParameterView() -> QParameterView* {
-		QParameterView* param_view = new QParameterView();
-
-		this->h_splitter->addWidget(param_view);
-
-		return param_view;
+		return structureView;
 	}
 
 	auto MainWindow::UpdateWindowTitle() -> void
@@ -289,10 +252,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(
-			this->wdb_model->GetModel(),
-			fileptr
-		);
+		libWDB::Save(this->wdb_model->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?
@@ -327,10 +287,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(
-			this->wdb_model->GetModel(),
-			fileptr
-		);
+		libWDB::Save(this->wdb_model->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?
@@ -345,28 +302,24 @@ namespace WDBEditor
 		this->UpdateWindowTitle();
 	}
 
-	void MainWindow::ShowLicense() {
-		QString license_text (
-			"WDBEditor  Copyright (C) 2023  Amber Cassimon<br>"
-			"This program is free software: you can redistribute it and/or modify<br>"
-			"it under the terms of the GNU General Public License as published by<br>"
-			"the Free Software Foundation, either version 3 of the License, or<br>"
-			"(at your option) any later version.<br>"
-			"<br>"
-			"This program is distributed in the hope that it will be useful,<br>"
-			"but WITHOUT ANY WARRANTY; without even the implied warranty of<br>"
-			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>"
-			"GNU General Public License for more details.<br>"
-			"<br>"
-			"You should have received a copy of the GNU General Public License<br>"
-			"along with this program.  If not, see <a href=\"https://www.gnu.org/licenses/\">https://www.gnu.org/licenses/</a>."
-		);
+	void MainWindow::ShowLicense()
+	{
+		QString license_text("WDBEditor  Copyright (C) 2023  Amber Cassimon<br>"
+							 "This program is free software: you can redistribute it and/or modify<br>"
+							 "it under the terms of the GNU General Public License as published by<br>"
+							 "the Free Software Foundation, either version 3 of the License, or<br>"
+							 "(at your option) any later version.<br>"
+							 "<br>"
+							 "This program is distributed in the hope that it will be useful,<br>"
+							 "but WITHOUT ANY WARRANTY; without even the implied warranty of<br>"
+							 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>"
+							 "GNU General Public License for more details.<br>"
+							 "<br>"
+							 "You should have received a copy of the GNU General Public License<br>"
+							 "along with this program.  If not, see <a "
+							 "href=\"https://www.gnu.org/licenses/\">https://www.gnu.org/licenses/</a>.");
 
-		QMessageBox license_dialog (
-			QMessageBox::Icon::Information,
-			QString("License"),
-			license_text
-		);
+		QMessageBox license_dialog(QMessageBox::Icon::Information, QString("License"), license_text);
 
 		license_dialog.setTextFormat(Qt::RichText);
 		license_dialog.setTextInteractionFlags(Qt::TextBrowserInteraction);
@@ -374,24 +327,23 @@ namespace WDBEditor
 		license_dialog.exec();
 	}
 
-	void MainWindow::ShowVersion() {
+	void MainWindow::ShowVersion()
+	{
 		QString version_string = QString::fromStdString(
-			"WDBEditor Version: " + std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(PATCH_VERSION) + "\n" +
-			"Build Date: " + BUILD_DATE + "\n" +
-			"Qt " + std::to_string(QT_VERSION_MAJOR) + "." + std::to_string(QT_VERSION_MINOR) + "." + std::to_string(QT_VERSION_PATCH)
+			"WDBEditor Version: " + std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." +
+			std::to_string(PATCH_VERSION) + "\n" + "Build Date: " + BUILD_DATE + "\n" + "Qt " +
+			std::to_string(QT_VERSION_MAJOR) + "." + std::to_string(QT_VERSION_MINOR) + "." +
+			std::to_string(QT_VERSION_PATCH)
 		);
 
-		QMessageBox version_dialog (
-			QMessageBox::Icon::Information,
-			QString("Version"),
-			version_string
-		);
+		QMessageBox version_dialog(QMessageBox::Icon::Information, QString("Version"), version_string);
 
 		version_dialog.setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse);
 
 		version_dialog.exec();
 	}
-	void MainWindow::ModelChanged() {
+	void MainWindow::ModelChanged()
+	{
 		this->dirty = true;
 
 		this->UpdateWindowTitle();
