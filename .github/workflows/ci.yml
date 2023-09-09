@@ -106,16 +106,14 @@ jobs:
           path: legoiso
           key: legoiso
 
-      - name: Check
-        shell: bash
-        run: |
-          ls -lah
-          ls -lah legoiso
-
       - name: Extract ISO
         uses: edgarrc/action-7z@v1
         with:
           args: 7z x -o"LEGO Island" "legoiso/English, September.ISO"
+
+      # While Qt is not required for the build to succeed, CMake does require it to configure...
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
 
       - name: Setup GCC
         uses: Dup4/actions-setup-gcc@v1
