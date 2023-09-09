@@ -123,8 +123,8 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
-          ninja Reconstruct
+          cmake -DCMAKE_BUILD_TYPE=Release .
+          cmake --build . --target Reconstruct
 
       - name: Reconstruct
         shell: bash
