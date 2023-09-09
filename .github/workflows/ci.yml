@@ -115,7 +115,7 @@ jobs:
       - name: Extract ISO
         uses: edgarrc/action-7z@v1
         with:
-          args: 7z x -o"LEGO Island" "legoiso\English, September.ISO"
+          args: 7z x -o"LEGO Island" "legoiso/English, September.ISO"
 
       - name: Setup GCC
         uses: Dup4/actions-setup-gcc@v1
