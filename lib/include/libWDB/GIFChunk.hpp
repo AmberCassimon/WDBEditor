@@ -7,10 +7,12 @@
 
 #include <vector>
 
+#include "libWDB/GIFImage.hpp"
+
 namespace libWDB
 {
 	struct GIFChunk
 	{
-			std::vector<unsigned char> gif_data;
+			std::vector<GIFImage> images;
 	};
 } // namespace libWDB

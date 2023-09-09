@@ -15,6 +15,8 @@ namespace libWDB
 	auto Filesize(FILE* fileptr) noexcept(false) -> long;
 
 	// Read binary data
+	auto Uint8FromLEBytes(unsigned char** ptr) -> std::uint8_t;
+
 	auto Uint32FromLEBytes(unsigned char** ptr) -> std::uint32_t;
 
 	auto ByteArrayFromLEBytes(unsigned char** ptr, std::uint32_t length) -> std::vector<unsigned char>;

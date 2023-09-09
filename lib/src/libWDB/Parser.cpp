@@ -137,6 +137,83 @@ namespace libWDB
 			}
 		}
 
+		auto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void
+		{
+			// We're at the end of the buffer
+			if (end <= (*byte_ptr))
+			{
+				return;
+			}
+
+			image.color_index.reserve(static_cast<std::size_t>(image.height * image.width));
+
+			for (std::uint32_t row = 0; row < image.height; ++row)
+			{
+				for (std::uint32_t col = 0; col < image.width; ++col)
+				{
+					image.color_index.push_back(Uint8FromLEBytes(byte_ptr));
+				}
+			}
+		}
+
+		auto ParseColorPalette(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void
+		{
+			// We're at the end of the buffer
+			if (end <= (*byte_ptr))
+			{
+				return;
+			}
+
+			const std::uint32_t num_colors = Uint32FromLEBytes(byte_ptr);
+
+			for (std::uint32_t color_index = 0; color_index < num_colors; ++color_index)
+			{
+				image.colors.emplace_back(Color {
+					Uint8FromLEBytes(byte_ptr), // Red
+					Uint8FromLEBytes(byte_ptr), // Green
+					Uint8FromLEBytes(byte_ptr)	// Blue
+				});
+			}
+		}
+
+		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void
+		{
+			// We're at the end of the buffer
+			if (end <= (*byte_ptr))
+			{
+				return;
+			}
+
+			const std::uint32_t gif_name_length = Uint32FromLEBytes(byte_ptr);
+			const std::string gif_name = ASCIIStringFromLEBytes(byte_ptr, gif_name_length);
+
+			const std::uint32_t width = Uint32FromLEBytes(byte_ptr);
+			const std::uint32_t height = Uint32FromLEBytes(byte_ptr);
+
+			GIFImage image {gif_name, width, height, {}, {}};
+
+			ParseColorPalette(byte_ptr, end, image);
+			ParseImage(byte_ptr, end, image);
+
+			chunk.images.push_back(std::move(image));
+		}
+
+		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void
+		{
+			// We're at the end of the buffer
+			if (end <= (*byte_ptr))
+			{
+				return;
+			}
+
+			const std::uint32_t num_images = Uint32FromLEBytes(byte_ptr);
+
+			for (std::uint32_t i = 0; i < num_images; ++i)
+			{
+				ParseGIFImage(byte_ptr, end, chunk);
+			}
+		}
+
 		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void
 		{
 			// We're at the end of the buffer
@@ -146,9 +223,11 @@ namespace libWDB
 			}
 
 			const std::uint32_t gif_chunk_bytes = Uint32FromLEBytes(byte_ptr);
-			GIFChunk loose_gif_chunk {
-				ByteArrayFromLEBytes(byte_ptr, gif_chunk_bytes)
-			};
+			const unsigned char* gif_chunk_end = end + gif_chunk_bytes;
+
+			GIFChunk loose_gif_chunk {};
+
+			ParseGIFChunk(byte_ptr, gif_chunk_end, loose_gif_chunk);
 
 			wdb.SetLooseGIFChunk(std::move(loose_gif_chunk));
 		}

@@ -9,15 +9,19 @@
 
 namespace libWDB
 {
-	WorldDatabase::WorldDatabase(WorldDatabase&& wdb) noexcept: first_group(wdb.first_group)
+	WorldDatabase::WorldDatabase(WorldDatabase&& wdb) noexcept: first_group(wdb.first_group), loose_gif_chunk(wdb.loose_gif_chunk)
 	{
 		wdb.first_group = std::nullopt;
+		wdb.loose_gif_chunk = std::nullopt;
 	}
 
 	auto WorldDatabase::operator=(WorldDatabase&& wdb) noexcept -> WorldDatabase&
 	{
 		this->first_group = wdb.first_group;
+		this->loose_gif_chunk = wdb.loose_gif_chunk;
+
 		wdb.first_group = std::nullopt;
+		wdb.loose_gif_chunk = std::nullopt;
 
 		return *this;
 	}

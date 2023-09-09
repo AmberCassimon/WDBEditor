@@ -145,8 +145,7 @@ namespace libWDB
 
 			const GIFChunk& gif_chunk = database.LooseGIFChunk()->get();
 
-			Uint32ToLEBytes(static_cast<std::uint32_t>(gif_chunk.gif_data.size()), fileptr);
-			ByteArrayToLEBytes(gif_chunk.gif_data, fileptr);
+			// TODO: Serialize GIF Image
 		}
 	} // namespace __detail
 

@@ -64,6 +64,14 @@ namespace libWDB
 		return filesize;
 	}
 
+	auto Uint8FromLEBytes(unsigned char** ptr) -> std::uint8_t
+	{
+		const std::uint8_t byte = (*ptr)[0];
+		*ptr += 1;
+
+		return byte;
+	}
+
 	auto Uint32FromLEBytes(unsigned char** byte_ptr) -> std::uint32_t
 	{
 		const std::uint32_t u32 =

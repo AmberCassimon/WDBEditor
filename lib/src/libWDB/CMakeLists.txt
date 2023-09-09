@@ -1,6 +1,8 @@
 target_sources(WDB PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/BinaryTreeNode.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GIFChunk.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/GIFImage.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Group.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/NodeType.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp

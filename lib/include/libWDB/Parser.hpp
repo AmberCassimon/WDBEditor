@@ -17,6 +17,7 @@ namespace libWDB
 {
 	namespace __detail
 	{
+		// Hierarchical Structure
 		auto ParseSubItem(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* subgroup_node, bool read_presenter_data) -> void;
 
 		auto ParseSubItems(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* subgroup_node, bool read_presenter_data) -> void;
@@ -28,6 +29,15 @@ namespace libWDB
 		auto ParseGroup(unsigned char** current, const unsigned char* end, WorldDatabase& wdb) -> void;
 
 		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
+
+		// GIF Chunks
+		auto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
+
+		auto ParseColorPalette(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
+
+		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void;
+
+		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void;
 
 		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
 	} // namespace __detail

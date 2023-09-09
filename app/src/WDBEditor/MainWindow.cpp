@@ -6,7 +6,6 @@
 #include "WDBEditor/MainWindow.hpp"
 
 #include <cstdio>
-#include <iomanip>
 #include <sstream>
 
 #include <QDebug>
