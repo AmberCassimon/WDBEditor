@@ -45,7 +45,7 @@ namespace WDBEditor
 			// Prepare UI Elements
 			auto PrepareHSplitter() -> QSplitter*;
 
-			auto PrepareTreeView(QWorldDatabase* qwdb) -> QTreeView*;
+			auto PrepareTreeView() -> QTreeView*;
 
 			auto PrepareParameterView() -> QParameterView*;
 
