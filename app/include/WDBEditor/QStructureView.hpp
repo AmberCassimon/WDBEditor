@@ -26,6 +26,13 @@ namespace WDBEditor
 
 			~QStructureView();
 
+			auto SetModel(libWDB::WorldDatabase&& wdb) -> void;
+
+			auto GetModel() const -> const libWDB::WorldDatabase&;
+
+		signals:
+				void ModelChanged();
+
 		private:
 			// Main UI
 			QHBoxLayout* layout;
@@ -44,5 +51,8 @@ namespace WDBEditor
 			auto PrepareTreeView() -> QTreeView*;
 
 			auto PrepareParameterView() -> QParameterView*;
+
+		private slots:
+			void _ModelChanged();
 	};
 } // namespace WDBEditor

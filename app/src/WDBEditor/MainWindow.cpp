@@ -39,7 +39,7 @@ namespace WDBEditor
 	{
 		this->resize(MainWindow::INITIAL_SIZE);
 
-		connect(this->parameter_view, &QParameterView::ModelChanged, this, &MainWindow::ModelChanged);
+		connect(this->structure_view, &QStructureView::ModelChanged, this, &MainWindow::ModelChanged);
 
 		this->UpdateWindowTitle();
 	}
@@ -211,7 +211,7 @@ namespace WDBEditor
 				this->UpdateWindowTitle();
 
 				libWDB::WorldDatabase wdb = std::move(wdb_opt.value());
-				this->wdb_model->SetModel(std::move(wdb));
+				this->structure_view->SetModel(std::move(wdb));
 			}
 		} catch (libWDB::WDBParseException& wpe)
 		{
@@ -252,7 +252,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(this->wdb_model->GetModel(), fileptr);
+		libWDB::Save(this->structure_view->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?
@@ -287,7 +287,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(this->wdb_model->GetModel(), fileptr);
+		libWDB::Save(this->structure_view->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?

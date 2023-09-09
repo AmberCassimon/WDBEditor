@@ -28,6 +28,13 @@ namespace WDBEditor
 			&QParameterView::ObjectChanged
 		);
 
+		connect(
+			this->parameter_view,
+			&QParameterView::ModelChanged,
+			this,
+			&QStructureView::_ModelChanged
+		);
+
 		this->h_splitter->setSizes({INT_MAX, INT_MAX});
 	}
 
@@ -37,6 +44,14 @@ namespace WDBEditor
 		delete this->h_splitter;
 
 		delete this->wdb_model;
+	}
+
+	auto QStructureView::SetModel(libWDB::WorldDatabase&& wdb) -> void {
+		this->wdb_model->SetModel(std::move(wdb));
+	}
+
+	auto QStructureView::GetModel() const -> const libWDB::WorldDatabase& {
+		return this->wdb_model->GetModel();
 	}
 
 	auto QStructureView::PrepareHSplitter() -> QSplitter* {
@@ -67,5 +82,9 @@ namespace WDBEditor
 		this->h_splitter->addWidget(param_view);
 
 		return param_view;
+	}
+
+	void QStructureView::_ModelChanged() {
+		emit ModelChanged();
 	}
 } // namespace WDBEditor
