@@ -9,18 +9,15 @@
 
 namespace WDBEditor
 {
-	QStructureView::QStructureView(): QStructureView(nullptr) {}
+	QStructureView::QStructureView(QWorldDatabase* qwdb): QStructureView(qwdb, nullptr) {}
 
-	QStructureView::QStructureView(QWidget* parent):
+	QStructureView::QStructureView(QWorldDatabase* qwdb, QWidget* parent):
 		QWidget(parent),
 		layout(new QHBoxLayout(this)),
 		h_splitter(this->PrepareHSplitter()),
-		wdb_model(new QWorldDatabase()),
-		tree_view(this->PrepareTreeView()),
+		tree_view(this->PrepareTreeView(qwdb)),
 		parameter_view(this->PrepareParameterView())
 	{
-		this->tree_view->setModel(this->wdb_model);
-
 		connect(
 			this->tree_view->selectionModel(),
 			&QItemSelectionModel::currentRowChanged,
@@ -42,16 +39,10 @@ namespace WDBEditor
 		// Delete Main UI
 		// Deleting splitter also deletes tree view
 		delete this->h_splitter;
-
-		delete this->wdb_model;
 	}
 
-	auto QStructureView::SetModel(libWDB::WorldDatabase&& wdb) -> void {
-		this->wdb_model->SetModel(std::move(wdb));
-	}
-
-	auto QStructureView::GetModel() const -> const libWDB::WorldDatabase& {
-		return this->wdb_model->GetModel();
+	auto QStructureView::SetModel(QAbstractItemModel* model) -> void {
+		this->tree_view->setModel(model);
 	}
 
 	auto QStructureView::PrepareHSplitter() -> QSplitter* {
@@ -63,7 +54,7 @@ namespace WDBEditor
 		return splitter;
 	}
 
-	auto QStructureView::PrepareTreeView() -> QTreeView* {
+	auto QStructureView::PrepareTreeView(QWorldDatabase* qwdb) -> QTreeView* {
 		QTreeView* treeView = new QTreeView(this->h_splitter);
 		treeView->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
 		treeView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
@@ -72,6 +63,7 @@ namespace WDBEditor
 		treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 		this->h_splitter->addWidget(treeView);
+		treeView->setModel(qwdb);
 
 		return treeView;
 	}

@@ -16,7 +16,6 @@
 #include <QMessageBox>
 #include <QString>
 
-#include "WDBEditor/QWorldDatabase.hpp"
 #include "WDBEditor/Util.hpp"
 
 #include "libWDB/Parser.hpp"
@@ -27,6 +26,7 @@ namespace WDBEditor
 {
 	MainWindow::MainWindow(QWidget* parent):
 		QMainWindow(parent),
+		qwdb(new QWorldDatabase()),
 		open_file_act(this->PrepareOpenAction()),
 		save_file_act(this->PrepareSaveAction()),
 		save_as_file_act(this->PrepareSaveAsAction()),
@@ -38,6 +38,7 @@ namespace WDBEditor
 		structure_view(this->PrepareStructureView())
 	{
 		this->resize(MainWindow::INITIAL_SIZE);
+		this->structure_view->SetModel(this->qwdb);
 
 		connect(this->structure_view, &QStructureView::ModelChanged, this, &MainWindow::ModelChanged);
 
@@ -46,6 +47,11 @@ namespace WDBEditor
 
 	MainWindow::~MainWindow()
 	{
+		// Underlying model data
+		this->dirty = false;
+		this->filename.reset();
+		delete this->qwdb;
+
 		// File Menu
 		delete this->file_menu;
 		delete this->about_menu;
@@ -57,10 +63,6 @@ namespace WDBEditor
 		delete this->show_version_act;
 
 		delete this->structure_view;
-
-		// Underlying model data
-		this->dirty = false;
-		this->filename.reset();
 	}
 
 	auto MainWindow::PrepareOpenAction() -> QAction*
@@ -150,7 +152,7 @@ namespace WDBEditor
 	}
 
 	auto MainWindow::PrepareStructureView() -> QStructureView* {
-		QStructureView* structureView = new QStructureView();
+		QStructureView* structureView = new QStructureView(this->qwdb);
 
 		this->tab_widget->addTab(structureView, "Structure");
 
@@ -211,7 +213,11 @@ namespace WDBEditor
 				this->UpdateWindowTitle();
 
 				libWDB::WorldDatabase wdb = std::move(wdb_opt.value());
-				this->structure_view->SetModel(std::move(wdb));
+				QWorldDatabase* qworld_db = new QWorldDatabase();
+				qworld_db->SetModel(std::move(wdb));
+
+				this->structure_view->SetModel(qworld_db);
+				this->qwdb = qworld_db;
 			}
 		} catch (libWDB::WDBParseException& wpe)
 		{
@@ -252,7 +258,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(this->structure_view->GetModel(), fileptr);
+		libWDB::Save(this->qwdb->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?
@@ -287,7 +293,7 @@ namespace WDBEditor
 			return;
 		}
 
-		libWDB::Save(this->structure_view->GetModel(), fileptr);
+		libWDB::Save(this->qwdb->GetModel(), fileptr);
 
 		// What are we going to do if an error occurs during closing?
 		// Not much we can recover from, realistically?

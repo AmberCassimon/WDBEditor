@@ -15,6 +15,7 @@
 #include <QSplitter>
 #include <QTreeView>
 
+#include "WDBEditor/QWorldDatabase.hpp"
 #include "WDBEditor/QStructureView.hpp"
 
 namespace WDBEditor
@@ -35,6 +36,7 @@ namespace WDBEditor
 			// Model
 			bool dirty {false};
 			std::optional<std::string> filename {std::nullopt};
+			QWorldDatabase* qwdb {nullptr};
 
 			// Actions for menu items
 			QAction* open_file_act {nullptr};

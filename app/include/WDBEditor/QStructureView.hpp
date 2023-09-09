@@ -20,15 +20,13 @@ namespace WDBEditor
 			Q_OBJECT;
 
 		public:
-			QStructureView();
+			QStructureView(QWorldDatabase* qwdb);
 
-			explicit QStructureView(QWidget* parent);
+			explicit QStructureView(QWorldDatabase* qwdb, QWidget* parent);
 
 			~QStructureView();
 
-			auto SetModel(libWDB::WorldDatabase&& wdb) -> void;
-
-			auto GetModel() const -> const libWDB::WorldDatabase&;
+			auto SetModel(QAbstractItemModel* model) -> void;
 
 		signals:
 				void ModelChanged();
@@ -40,7 +38,6 @@ namespace WDBEditor
 			QSplitter* h_splitter;
 
 			// Tree View
-			QWorldDatabase* wdb_model {nullptr};
 			QTreeView* tree_view {nullptr};
 
 			QParameterView* parameter_view {nullptr};
@@ -48,7 +45,7 @@ namespace WDBEditor
 			// Prepare UI Elements
 			auto PrepareHSplitter() -> QSplitter*;
 
-			auto PrepareTreeView() -> QTreeView*;
+			auto PrepareTreeView(QWorldDatabase* qwdb) -> QTreeView*;
 
 			auto PrepareParameterView() -> QParameterView*;
 
