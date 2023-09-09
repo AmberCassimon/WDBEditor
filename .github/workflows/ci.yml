@@ -99,12 +99,18 @@ jobs:
           gdown "https://drive.google.com/uc?id=1sMowLMjjJ461ldejlWGLX_-tXhx_1lAJ&export=download"
           python3 -c "import zipfile; zipfile.ZipFile('LEGO Island [English v1.1].zip', 'r').extractall('legoiso')"
 
-      - name: Cache original binaries
+      - name: Cache original ISO
         if: ${{ !steps.cache-original-iso.outputs.cache-hit }}
         uses: actions/cache/save@v3
         with:
           path: legoiso
           key: legoiso
+
+      - name: Check
+        shell: bash
+        run: |
+          ls -lah
+          ls -lah legoiso
 
       - name: Extract ISO
         uses: edgarrc/action-7z@v1
