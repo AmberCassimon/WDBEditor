@@ -88,6 +88,12 @@ jobs:
           path: legoiso
           key: legoiso
 
+      - name: a
+        shell: bash
+        run: |
+          ls -lah
+          ls -lah legoiso
+
       # Test the reconstruction ability
       - name: Extract ISO
         uses: DuckSoft/extract-7z-action@v1.0
