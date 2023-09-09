@@ -90,9 +90,10 @@ jobs:
 
       # Test the reconstruction ability
       - name: Extract ISO
-        uses: edgarrc/action-7z@v1
+        uses: Ducksoft/extract-7z-action
         with:
-          args: 7z x -o"LEGO Island" "legoiso/English, September.ISO"
+          pathSource: "legoiso/English, September.ISO"
+          pathTarget: "LEGO Island"
 
       - name: Reconstruct
         shell: bash
