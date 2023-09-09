@@ -34,27 +34,24 @@ jobs:
       - name: Install Developer Command Prompt for Microsoft Visual C++
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
+        with:
+          version: "5.15.2"
+          cache: true
 
-      # Build the app, library and test app
+      # Build the app and library
       - name: Build
         shell: bash
         run: |
           cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
-          ninja
+          ninja WDBEditor
 
       - name: Deploy
         shell: bash
         run: |
           mkdir deploy
           cp WDBEditor.exe deploy
-          cp WDB.lib deploy
           cd deploy
           windeployqt WDBEditor.exe
 
@@ -65,7 +62,15 @@ jobs:
           path:
             deploy
 
-      # Get the cached ISO
+  compare:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Restore cached ISO
         id: cache-original-iso
         uses: actions/cache/restore@v3
@@ -88,38 +93,32 @@ jobs:
           path: legoiso
           key: legoiso
 
-      - name: a
+      - name: Extract ISO
+        uses: edgarrc/action-7z@v1
+        with:
+          args: 7z x -o"LEGO Island" "legoiso/English, September.ISO"
+
+      - name: Setup GCC
+        uses: Dup4/actions-setup-gcc@v1
+
+      # While Qt is not required for the build to succeed, CMake does require it to configure...
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+
+      - name: Build
         shell: bash
         run: |
-          ls -lah
-          ls -lah legoiso
-
-      # Test the reconstruction ability
-      - name: Extract ISO
-        uses: DuckSoft/extract-7z-action@v1.0
-        with:
-          pathSource: "legoiso/English, September.ISO"
-          pathTarget: "LEGO Island"
+          cmake -DCMAKE_BUILD_TYPE=Release .
+          cmake --build . --target Reconstruct
 
       - name: Reconstruct
         shell: bash
         run: |
-          Reconstruct "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB"
+          test/Reconstruct "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB"
 
       - name: Compare
-        shell: bash
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
         run: |
           python3 "tools/compare.py" "WORLD.WDB" "WORLD-Reconstructed.WDB"
-
-      # - name: Upload to Releases
-      #   shell: bash
-      #   if: github.event_name == 'push'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     TRAVIS_REPO_SLUG: itsmattkc/libweaver
-      #     TRAVIS_COMMIT: ${{ github.sha }}
-      #   run: |
-      #     cd deploy
-      #     7z a libweaver.zip *
-      #     curl -fLOSs --retry 2 --retry-delay 60 https://github.com/probonopd/uploadtool/raw/master/upload.sh
-      #     ./upload.sh libweaver.zip
