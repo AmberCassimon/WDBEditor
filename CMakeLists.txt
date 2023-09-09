@@ -18,7 +18,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 add_executable(WDBEditor)
 
 # And our library
-add_library(WDB)
+add_library(WDB SHARED)
 
 target_link_libraries(WDBEditor PRIVATE WDB Qt5::Widgets)
 
