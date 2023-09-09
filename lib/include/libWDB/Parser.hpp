@@ -31,7 +31,7 @@ namespace libWDB
 		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
 
 		// GIF Chunks
-		auto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
+
 
 		auto ParseColorPalette(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
 
@@ -43,4 +43,4 @@ namespace libWDB
 	} // namespace __detail
 
 	auto ParseWDB(FILE* fileptr) -> WorldDatabase;
-} // namespace libWDB
+} // namespace libWDBauto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;

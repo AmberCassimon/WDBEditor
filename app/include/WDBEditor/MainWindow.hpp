@@ -15,8 +15,9 @@
 #include <QSplitter>
 #include <QTreeView>
 
-#include "WDBEditor/QWorldDatabase.hpp"
+#include "WDBEditor/QLooseGIFView.hpp"
 #include "WDBEditor/QStructureView.hpp"
+#include "WDBEditor/QWorldDatabase.hpp"
 
 namespace WDBEditor
 {
@@ -53,6 +54,7 @@ namespace WDBEditor
 			QTabWidget* tab_widget;
 
 			QStructureView* structure_view {nullptr};
+			QLooseGIFView* loose_gif_view {nullptr};
 
 			// Setup for UI
 			// Prepare Actions
@@ -75,6 +77,8 @@ namespace WDBEditor
 			auto PrepareTabWidget() -> QTabWidget*;
 
 			auto PrepareStructureView() -> QStructureView*;
+
+			auto PrepareLooseGIFView() -> QLooseGIFView*;
 
 			// Updating the UI
 			auto UpdateWindowTitle() -> void;

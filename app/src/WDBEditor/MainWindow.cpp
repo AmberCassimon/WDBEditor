@@ -35,7 +35,8 @@ namespace WDBEditor
 		file_menu(this->PrepareFileMenu()),
 		about_menu(this->PrepareAboutMenu()),
 		tab_widget(this->PrepareTabWidget()),
-		structure_view(this->PrepareStructureView())
+		structure_view(this->PrepareStructureView()),
+		loose_gif_view(this->PrepareLooseGIFView())
 	{
 		this->resize(MainWindow::INITIAL_SIZE);
 		this->structure_view->SetModel(this->qwdb);
@@ -157,6 +158,14 @@ namespace WDBEditor
 		this->tab_widget->addTab(structureView, "Structure");
 
 		return structureView;
+	}
+
+	auto MainWindow::PrepareLooseGIFView() -> QLooseGIFView* {
+		QLooseGIFView* q_loose_gif_view = new QLooseGIFView(nullptr);
+
+		this->tab_widget->addTab(q_loose_gif_view, "Loose GIFs");
+
+		return q_loose_gif_view;
 	}
 
 	auto MainWindow::UpdateWindowTitle() -> void

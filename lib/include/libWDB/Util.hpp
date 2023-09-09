@@ -21,7 +21,7 @@ namespace libWDB
 
 	auto ByteArrayFromLEBytes(unsigned char** ptr, std::uint32_t length) -> std::vector<unsigned char>;
 
-	auto ASCIIStringFromLEBytes(unsigned char** ptr, std::uint32_t length) -> std::string;
+	auto ASCIIStringFromLEBytes(unsigned char** ptr, std::uint32_t length, bool null_terminator) -> std::string;
 
 	// Write binary data
 	auto Uint32ToLEBytes(std::uint32_t u32, FILE* fileptr) -> void;

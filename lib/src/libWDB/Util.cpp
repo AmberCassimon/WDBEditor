@@ -93,10 +93,10 @@ namespace libWDB
 		return bytes;
 	}
 
-	auto ASCIIStringFromLEBytes(unsigned char** ptr, std::uint32_t length) -> std::string
+	auto ASCIIStringFromLEBytes(unsigned char** ptr, std::uint32_t length, bool null_terminator) -> std::string
 	{
 		// WDB format includes NULL terminator, std::string doesn't need this
-		std::string string {reinterpret_cast<const char*>(*ptr), length - 1};
+		std::string string {reinterpret_cast<const char*>(*ptr), length - static_cast<int>(null_terminator)};
 		*ptr += length;	// We still "read" the 5th byte, so we need to increment the pointer past it
 
 		return string;

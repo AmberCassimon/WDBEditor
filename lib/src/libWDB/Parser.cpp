@@ -29,7 +29,7 @@ namespace libWDB
 			}
 
 			const std::uint32_t subitem_title_length = Uint32FromLEBytes(byte_ptr);
-			const std::string subitem_title = ASCIIStringFromLEBytes(byte_ptr, subitem_title_length);
+			const std::string subitem_title = ASCIIStringFromLEBytes(byte_ptr, subitem_title_length, true);
 			const std::uint32_t subitem_size = Uint32FromLEBytes(byte_ptr);
 			const std::uint32_t subitem_offset = Uint32FromLEBytes(byte_ptr);
 			std::optional<SubItemPresenterData> extra_data {std::nullopt};
@@ -37,7 +37,7 @@ namespace libWDB
 			if (read_presenter_data)
 			{
 				const std::uint32_t presenter_title_length = Uint32FromLEBytes(byte_ptr);
-				const std::string presenter_title = ASCIIStringFromLEBytes(byte_ptr, presenter_title_length);
+				const std::string presenter_title = ASCIIStringFromLEBytes(byte_ptr, presenter_title_length, true);
 
 				const std::vector<unsigned char> unknown_bytevec = ByteArrayFromLEBytes(byte_ptr, 37);
 				std::array<unsigned char, 37> unknown_bytes {};
@@ -115,7 +115,7 @@ namespace libWDB
 			}
 
 			const std::uint32_t group_title_length = Uint32FromLEBytes(byte_ptr);
-			const std::string group_title = ASCIIStringFromLEBytes(byte_ptr, group_title_length);
+			const std::string group_title = ASCIIStringFromLEBytes(byte_ptr, group_title_length, true);
 
 			BinaryTreeNode<WorldDatabaseNode>* bt_node = wdb.AddGroup(Group {group_title});
 			ParseSubGroups(byte_ptr, end, bt_node);
@@ -184,8 +184,9 @@ namespace libWDB
 				return;
 			}
 
+			// GIFs don't have a NULL terminator, so we add 1 to the length.
 			const std::uint32_t gif_name_length = Uint32FromLEBytes(byte_ptr);
-			const std::string gif_name = ASCIIStringFromLEBytes(byte_ptr, gif_name_length);
+			const std::string gif_name = ASCIIStringFromLEBytes(byte_ptr, gif_name_length, false);
 
 			const std::uint32_t width = Uint32FromLEBytes(byte_ptr);
 			const std::uint32_t height = Uint32FromLEBytes(byte_ptr);
