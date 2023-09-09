@@ -90,7 +90,7 @@ jobs:
 
       # Test the reconstruction ability
       - name: Extract ISO
-        uses: Ducksoft/extract-7z-action
+        uses: DuckSoft/extract-7z-action@v1.0
         with:
           pathSource: "legoiso/English, September.ISO"
           pathTarget: "LEGO Island"
