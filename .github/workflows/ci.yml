@@ -124,4 +124,11 @@ jobs:
       - name: Compare
         shell: bash
         run: |
-          python3 "tools/compare.py" "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB"
+          python3 "tools/compare.py" "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB" > reconstruction-report.txt
+
+        # Upload the reconstruction report
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2.2.1
+        with:
+          path:
+            reconstruction-report.txt
