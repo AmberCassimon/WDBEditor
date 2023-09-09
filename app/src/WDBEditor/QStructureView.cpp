@@ -13,7 +13,7 @@ namespace WDBEditor
 
 	QStructureView::QStructureView(QWidget* parent):
 		QWidget(parent),
-		layout(new QHBoxLayout(parent)),
+		layout(new QHBoxLayout(this)),
 		h_splitter(this->PrepareHSplitter()),
 		wdb_model(new QWorldDatabase()),
 		tree_view(this->PrepareTreeView()),
