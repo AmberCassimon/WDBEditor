@@ -32,7 +32,9 @@ class DifferenceReport:
 	def __str__(self) -> str:
 		return f"Modified Length: {self.modified_length:d}B ({100.0 * (float(self.modified_length) / float(self.original_length)):5.2f}%){os.linesep}" \
 			f"First differing byte: {self.first_different_byte}{os.linesep}" \
-			f"Number of differing bytes: {self.num_differing_bytes:d}B ({100.0 * (float(self.num_differing_bytes) / float(self.original_length)):5.2f}%)"
+			f"Number of differing bytes: {self.num_differing_bytes:d}B{os.linesep}" \
+			f"Error: {100.0 * (float(self.num_differing_bytes) / float(self.original_length)):5.2f}%{os.linesep}" \
+			f"Accuracy: {100.0 * (float(self.original_length - self.num_differing_bytes) / float(self.original_length)):5.2f}%{os.linesep}"
 
 
 def main() -> int:
