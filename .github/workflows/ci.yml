@@ -116,9 +116,12 @@ jobs:
         run: |
           test/Reconstruct "LEGO Island/DATA/disk/LEGO/data/WORLD.WDB" "WORLD-Reconstructed.WDB"
 
-      - name: Compare
+      - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Compare
+        shell: bash
         run: |
           python3 "tools/compare.py" "WORLD.WDB" "WORLD-Reconstructed.WDB"
