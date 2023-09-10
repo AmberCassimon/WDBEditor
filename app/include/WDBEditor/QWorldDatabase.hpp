@@ -38,8 +38,6 @@ namespace WDBEditor
 
 			[[nodiscard]] auto data(const QModelIndex& index, int role) const -> QVariant override;
 
-			// bool hasChildren(const QModelIndex& parent) const override;
-
 		private:
 			libWDB::WorldDatabase model;
 	};
