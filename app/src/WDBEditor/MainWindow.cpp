@@ -27,6 +27,7 @@ namespace WDBEditor
 	MainWindow::MainWindow(QWidget* parent):
 		QMainWindow(parent),
 		qwdb(new QWorldDatabase()),
+		gif_chunk(new QLooseGIFChunk()),
 		open_file_act(this->PrepareOpenAction()),
 		save_file_act(this->PrepareSaveAction()),
 		save_as_file_act(this->PrepareSaveAsAction()),
@@ -52,6 +53,7 @@ namespace WDBEditor
 		this->dirty = false;
 		this->filename.reset();
 		delete this->qwdb;
+		delete this->gif_chunk;
 
 		// File Menu
 		delete this->file_menu;

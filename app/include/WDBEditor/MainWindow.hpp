@@ -15,6 +15,7 @@
 #include <QSplitter>
 #include <QTreeView>
 
+#include "WDBEditor/QLooseGIFChunk.hpp"
 #include "WDBEditor/QLooseGIFView.hpp"
 #include "WDBEditor/QStructureView.hpp"
 #include "WDBEditor/QWorldDatabase.hpp"
@@ -38,6 +39,7 @@ namespace WDBEditor
 			bool dirty {false};
 			std::optional<std::string> filename {std::nullopt};
 			QWorldDatabase* qwdb {nullptr};
+			QLooseGIFChunk* gif_chunk {nullptr};
 
 			// Actions for menu items
 			QAction* open_file_act {nullptr};
