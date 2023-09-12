@@ -32,7 +32,7 @@ namespace WDBEditor
 	{
 		if ((Qt::Horizontal == orientation) && (Qt::DisplayRole == role))
 		{
-			std::array<QString, 4> sections {"Title", "Offset", "Size", ""};
+			std::array<QString, 5> sections {"Title", "Type", "Offset", "Size", ""};
 
 			if (sections.size() <= section)
 			{
@@ -58,7 +58,7 @@ namespace WDBEditor
 		return static_cast<int>(parent_ptr->Children().size());
 	}
 
-	auto QWorldDatabase::columnCount(const QModelIndex& parent) const -> int { return 4; }
+	auto QWorldDatabase::columnCount(const QModelIndex& parent) const -> int { return 5; }
 
 	auto QWorldDatabase::index(int row, int column, const QModelIndex& parent) const -> QModelIndex
 	{
@@ -167,7 +167,7 @@ namespace WDBEditor
 
 		if (Qt::TextAlignmentRole == role)
 		{
-			if (0 < index.column())
+			if (1 < index.column())
 			{
 				return Qt::AlignRight;
 			}
@@ -182,23 +182,25 @@ namespace WDBEditor
 		switch (bt_node->Data().Type())
 		{
 			case libWDB::NodeType::Group: {
-				if (0 == index.column())
+				switch (index.column())
 				{
-					return QString::fromStdString(bt_node->Data().GetGroup().value().get().title);
-				}
-				else
-				{
-					return QVariant();
+					case 0:
+						return QString::fromStdString(bt_node->Data().GetGroup().value().get().title);
+					case 1:
+						return QString("Group");
+					default:
+						return QVariant();
 				}
 			}
 			case libWDB::NodeType::SubGroup: {
-				if (0 == index.column())
+				switch (index.column())
 				{
-					return QString::fromStdString(std::to_string(index.row()));
-				}
-				else
-				{
-					return QVariant();
+					case 0:
+						return QString::fromStdString(std::to_string(index.row()));
+					case 1:
+						return QString("Subgroup");
+					default:
+						return QVariant();
 				}
 			}
 			case libWDB::NodeType::SubItem: {
@@ -209,11 +211,15 @@ namespace WDBEditor
 					}
 
 					case 1: {
+						return QString("Subitem");
+					}
+
+					case 2: {
 						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().offset)
 						);
 					}
 
-					case 2: {
+					case 3: {
 						return QString::fromStdString(std::to_string(bt_node->Data().GetSubItem().value().get().size));
 					}
 
