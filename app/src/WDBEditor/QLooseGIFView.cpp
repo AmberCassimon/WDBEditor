@@ -8,9 +8,14 @@
 namespace WDBEditor
 {
 	QLooseGIFView::QLooseGIFView(QWidget* parent):
-		QWidget(parent), root_layout(new QHBoxLayout(this)), h_splitter(this->PrepareHSplitter()), gif_list()
+		QWidget(parent),
+		root_layout(new QHBoxLayout(this)),
+		h_splitter(this->PrepareHSplitter()),
+		gif_list(this->PrepareGIFList())
 	{
 	}
+
+	auto QLooseGIFView::SetModel(QLooseGIFChunk* loose_gif_chunk) -> void { this->gif_list->setModel(loose_gif_chunk); }
 
 	auto QLooseGIFView::PrepareHSplitter() -> QSplitter*
 	{
@@ -22,7 +27,8 @@ namespace WDBEditor
 		return splitter;
 	}
 
-	auto QLooseGIFView::PrepareGIFList() -> QListView* {
+	auto QLooseGIFView::PrepareGIFList() -> QListView*
+	{
 		QListView* list_view = new QListView();
 
 		this->h_splitter->addWidget(list_view);

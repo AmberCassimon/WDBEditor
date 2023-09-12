@@ -20,11 +20,11 @@ namespace WDBEditor
 			Q_OBJECT;
 
 		public:
-			QStructureView(QWorldDatabase* qwdb);
+			explicit QStructureView(QWorldDatabase* qwdb);
 
-			explicit QStructureView(QWorldDatabase* qwdb, QWidget* parent);
+			QStructureView(QWorldDatabase* qwdb, QWidget* parent);
 
-			~QStructureView();
+			~QStructureView() override;
 
 			auto SetModel(QAbstractItemModel* model) -> void;
 

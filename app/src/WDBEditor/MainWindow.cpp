@@ -41,6 +41,7 @@ namespace WDBEditor
 	{
 		this->resize(MainWindow::INITIAL_SIZE);
 		this->structure_view->SetModel(this->qwdb);
+		this->loose_gif_view->SetModel(this->gif_chunk);
 
 		connect(this->structure_view, &QStructureView::ModelChanged, this, &MainWindow::ModelChanged);
 
@@ -224,6 +225,10 @@ namespace WDBEditor
 				this->UpdateWindowTitle();
 
 				libWDB::WorldDatabase wdb = std::move(wdb_opt.value());
+
+				QLooseGIFChunk* qloose_gif_chunk = new QLooseGIFChunk();
+				qloose_gif_chunk->SetModel(std::move(wdb.LooseGIFChunk().value()));
+
 				QWorldDatabase* qworld_db = new QWorldDatabase();
 				qworld_db->SetModel(std::move(wdb));
 

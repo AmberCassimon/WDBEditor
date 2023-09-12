@@ -10,6 +10,8 @@
 #include <QSplitter>
 #include <QWidget>
 
+#include "WDBEditor/QLooseGIFChunk.hpp"
+
 namespace WDBEditor
 {
 	class QLooseGIFView final: public QWidget
@@ -19,6 +21,8 @@ namespace WDBEditor
 
 		public:
 			explicit QLooseGIFView(QWidget* parent);
+
+			auto SetModel(QLooseGIFChunk* loose_gif_chunk) -> void;
 
 		private:
 			QHBoxLayout* root_layout {nullptr};

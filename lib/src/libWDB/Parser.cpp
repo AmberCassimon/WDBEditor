@@ -106,12 +106,12 @@ namespace libWDB
 			}
 		}
 
-		auto ParseGroup(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void
+		auto ParseGroup(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<WorldDatabaseNode>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
 			{
-				return;
+				return std::nullopt;
 			}
 
 			const std::uint32_t group_title_length = Uint32FromLEBytes(byte_ptr);
@@ -121,20 +121,45 @@ namespace libWDB
 			ParseSubGroups(byte_ptr, end, bt_node);
 		}
 
-		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void
+		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
 			{
-				return;
+				return std::nullopt;
 			}
 
 			const std::uint32_t num_groups = Uint32FromLEBytes(byte_ptr);
 
-			for (std::uint32_t i = 0; i < num_groups; ++i)
+			if (0 == num_groups)
 			{
-				ParseGroup(byte_ptr, end, wdb);
+				return std::nullopt;
 			}
+
+			std::optional<WorldDatabaseNode> first_group_data = ParseGroup(byte_ptr, end);
+
+			if (!first_group_data.has_value())
+			{
+				return std::nullopt;
+			}
+
+			BinaryTreeNode<WorldDatabaseNode>* first_group_node = new BinaryTreeNode<WorldDatabaseNode>(std::move(first_group_data.value()));
+
+			for (std::uint32_t i = 1; i < num_groups; ++i)
+			{
+				std::optional<WorldDatabaseNode> wdbn_opt= ParseGroup(byte_ptr, end);
+
+				// Return empty if we failed to parse a group
+				// TODO: Error reporting!
+				if (!wdbn_opt.has_value())
+				{
+					return std::nullopt;
+				}
+
+				first_group_node->AddSibling(std::move(wdbn_opt.value()));
+			}
+
+			return std::make_optional<BinaryTreeNode<WorldDatabaseNode>*>(first_group_node);
 		}
 
 		auto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void
@@ -176,12 +201,12 @@ namespace libWDB
 			}
 		}
 
-		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void
+		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFImage>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
 			{
-				return;
+				return std::nullopt;
 			}
 
 			// GIFs don't have a NULL terminator, so we add 1 to the length.
@@ -196,45 +221,55 @@ namespace libWDB
 			ParseColorPalette(byte_ptr, end, image);
 			ParseImage(byte_ptr, end, image);
 
-			chunk.images.push_back(std::move(image));
+			return std::make_optional<GIFImage>(image);
 		}
 
-		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void
+		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFChunk>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
 			{
-				return;
+				return std::nullopt;
 			}
 
+			GIFChunk chunk {};
+
 			const std::uint32_t num_images = Uint32FromLEBytes(byte_ptr);
+			chunk.images.reserve(num_images);
 
 			for (std::uint32_t i = 0; i < num_images; ++i)
 			{
-				ParseGIFImage(byte_ptr, end, chunk);
+				std::optional<GIFImage> opt_img = ParseGIFImage(byte_ptr, end);
+
+				// Return empty if we failed to parse an image
+				// TODO: Error reporting!
+				if (!opt_img.has_value())
+				{
+					return std::nullopt;
+				}
+
+				chunk.images.push_back(opt_img.value());
 			}
+
+			return std::make_optional<GIFChunk>(chunk);
 		}
 
-		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void
+		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFChunk>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
 			{
-				return;
+				return std::nullopt;
 			}
 
 			const std::uint32_t gif_chunk_bytes = Uint32FromLEBytes(byte_ptr);
 			const unsigned char* gif_chunk_end = end + gif_chunk_bytes;
 
-			GIFChunk loose_gif_chunk {};
-
-			ParseGIFChunk(byte_ptr, gif_chunk_end, loose_gif_chunk);
-
-			wdb.SetLooseGIFChunk(std::move(loose_gif_chunk));
+			return ParseGIFChunk(byte_ptr, gif_chunk_end);
 		}
 	} // namespace __detail
 
-	auto ParseWDB(FILE* fileptr) -> WorldDatabase
+	auto ParseWDB(FILE* fileptr) -> ParseResult
 	{
 		const long filesize = Filesize(fileptr);
 
@@ -257,11 +292,11 @@ namespace libWDB
 
 		unsigned char* in_progress_ptr = buffer_start;
 
-		WorldDatabase wdb;
+		ParseResult result {
+			__detail::ParseGroups(&in_progress_ptr, buffer_end),
+			__detail::ParseLooseGIFChunk(&in_progress_ptr, buffer_end)
+		};
 
-		__detail::ParseGroups(&in_progress_ptr, buffer_end, wdb);
-		__detail::ParseLooseGIFChunk(&in_progress_ptr, buffer_end, wdb);
-
-		return wdb;
+		return result;
 	}
 } // namespace libWDB

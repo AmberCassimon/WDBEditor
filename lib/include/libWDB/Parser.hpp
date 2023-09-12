@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "libWDB/Group.hpp"
+#include "libWDB/ParseResult.hpp"
 #include "libWDB/SubGroup.hpp"
 #include "libWDB/SubItem.hpp"
 #include "libWDB/WorldDatabase.hpp"
@@ -28,19 +29,17 @@ namespace libWDB
 
 		auto ParseGroup(unsigned char** current, const unsigned char* end, WorldDatabase& wdb) -> void;
 
-		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
+		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>;
 
 		// GIF Chunks
-
-
 		auto ParseColorPalette(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
 
-		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void;
+		auto ParseGIFImage(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFImage>;
 
-		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, GIFChunk& chunk) -> void;
+		auto ParseGIFChunk(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFChunk>;
 
-		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end, WorldDatabase& wdb) -> void;
+		auto ParseLooseGIFChunk(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<GIFChunk>;
 	} // namespace __detail
 
-	auto ParseWDB(FILE* fileptr) -> WorldDatabase;
-} // namespace libWDBauto ParseImage(unsigned char** byte_ptr, const unsigned char* end, GIFImage& image) -> void;
+	auto ParseWDB(FILE* fileptr) -> ParseResult;
+} // namespace libWDB
