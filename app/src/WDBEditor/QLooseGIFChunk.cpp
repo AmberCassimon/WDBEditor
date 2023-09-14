@@ -11,7 +11,19 @@ namespace WDBEditor
 {
 	QLooseGIFChunk::QLooseGIFChunk(): gif_chunk(libWDB::GIFChunk {}) {}
 
-	auto QLooseGIFChunk::SetModel(libWDB::GIFChunk&& gif_chunk) -> void { this->gif_chunk = std::move(gif_chunk); }
+	auto QLooseGIFChunk::SetModel(libWDB::GIFChunk&& gif_chunk) -> void {
+		// Only perform the row removal if we actually have rows
+		if (0 < this->rowCount(QModelIndex()))
+		{
+			this->beginRemoveRows(QModelIndex(), 0, this->rowCount(QModelIndex()) - 1);
+			this->endRemoveRows();
+		}
+
+		this->gif_chunk = std::move(gif_chunk);
+
+		this->beginInsertRows(QModelIndex(), 0, this->rowCount(QModelIndex()) - 1);
+		this->endInsertRows();
+	}
 
 	auto QLooseGIFChunk::headerData(int section, Qt::Orientation orientation, int role) const -> QVariant
 	{
@@ -32,7 +44,13 @@ namespace WDBEditor
 
 	auto QLooseGIFChunk::rowCount(const QModelIndex& parent) const -> int
 	{
-		return static_cast<int>(this->gif_chunk.images.size());
+		// Parent was invalid, get group count
+		if (QModelIndex() == parent)
+		{
+			return static_cast<int>(this->gif_chunk.images.size());
+		}
+
+		return 0;
 	}
 
 	auto QLooseGIFChunk::columnCount(const QModelIndex& parent) const -> int { return 4; }

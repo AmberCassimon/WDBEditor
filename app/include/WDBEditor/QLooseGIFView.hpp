@@ -8,6 +8,7 @@
 #include <QHBoxLayout>
 #include <QListView>
 #include <QSplitter>
+#include <QTreeView>
 #include <QWidget>
 
 #include "WDBEditor/QLooseGIFChunk.hpp"
@@ -22,17 +23,17 @@ namespace WDBEditor
 		public:
 			explicit QLooseGIFView(QWidget* parent);
 
-			auto SetModel(QLooseGIFChunk* loose_gif_chunk) -> void;
+			auto SetModel(QAbstractItemModel* model) -> void;
 
 		private:
 			QHBoxLayout* root_layout {nullptr};
 
 			QSplitter* h_splitter {nullptr};
 
-			QListView* gif_list {nullptr};
+			QTreeView* gif_list {nullptr};
 
 			auto PrepareHSplitter() -> QSplitter*;
 
-			auto PrepareGIFList() -> QListView*;
+			auto PrepareGIFList() -> QTreeView*;
 	};
 } // namespace WDBEditor

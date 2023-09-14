@@ -44,6 +44,7 @@ namespace WDBEditor
 		this->loose_gif_view->SetModel(this->gif_chunk);
 
 		connect(this->structure_view, &QStructureView::ModelChanged, this, &MainWindow::ModelChanged);
+		// connect(this->loose_gif_view, &QLooseGIFView::ModelChanged, this, &MainWindow::ModelChanged);
 
 		this->UpdateWindowTitle();
 	}
@@ -230,6 +231,9 @@ namespace WDBEditor
 				{
 					QLooseGIFChunk* qloose_gif_chunk = new QLooseGIFChunk();
 					qloose_gif_chunk->SetModel(std::move(result.loose_gif_chunk.value()));
+
+					this->gif_chunk = qloose_gif_chunk;
+					this->loose_gif_view->SetModel(this->gif_chunk);
 				}
 
 				if (result.first_group.has_value())
@@ -237,8 +241,8 @@ namespace WDBEditor
 					QWorldDatabase* qworld_db = new QWorldDatabase();
 					qworld_db->SetModel(libWDB::WorldDatabase{result.first_group.value()});
 
-					this->structure_view->SetModel(qworld_db);
 					this->qwdb = qworld_db;
+					this->structure_view->SetModel(this->qwdb);
 				}
 			}
 		} catch (libWDB::WDBParseException& wpe)
