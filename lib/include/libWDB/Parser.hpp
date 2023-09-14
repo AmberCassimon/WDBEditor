@@ -27,7 +27,7 @@ namespace libWDB
 
 		auto ParseSubGroups(unsigned char** byte_ptr, const unsigned char* end, BinaryTreeNode<WorldDatabaseNode>* group_node) -> void;
 
-		auto ParseGroup(unsigned char** current, const unsigned char* end, WorldDatabase& wdb) -> void;
+		auto ParseGroup(unsigned char** current, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>;
 
 		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>;
 

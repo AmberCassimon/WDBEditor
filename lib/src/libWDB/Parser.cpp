@@ -106,7 +106,7 @@ namespace libWDB
 			}
 		}
 
-		auto ParseGroup(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<WorldDatabaseNode>
+		auto ParseGroup(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>
 		{
 			// We're at the end of the buffer
 			if (end <= (*byte_ptr))
@@ -117,8 +117,12 @@ namespace libWDB
 			const std::uint32_t group_title_length = Uint32FromLEBytes(byte_ptr);
 			const std::string group_title = ASCIIStringFromLEBytes(byte_ptr, group_title_length, true);
 
-			BinaryTreeNode<WorldDatabaseNode>* bt_node = wdb.AddGroup(Group {group_title});
+			WorldDatabaseNode wdb_node {Group {group_title}};
+			BinaryTreeNode<WorldDatabaseNode>* bt_node = new BinaryTreeNode<WorldDatabaseNode>(std::move(wdb_node));
+
 			ParseSubGroups(byte_ptr, end, bt_node);
+
+			return std::make_optional<BinaryTreeNode<WorldDatabaseNode>*>(bt_node);
 		}
 
 		auto ParseGroups(unsigned char** byte_ptr, const unsigned char* end) -> std::optional<BinaryTreeNode<WorldDatabaseNode>*>
@@ -136,27 +140,27 @@ namespace libWDB
 				return std::nullopt;
 			}
 
-			std::optional<WorldDatabaseNode> first_group_data = ParseGroup(byte_ptr, end);
+			std::optional<BinaryTreeNode<WorldDatabaseNode>*> first_group_node_opt = ParseGroup(byte_ptr, end);
 
-			if (!first_group_data.has_value())
+			if (!first_group_node_opt.has_value())
 			{
 				return std::nullopt;
 			}
 
-			BinaryTreeNode<WorldDatabaseNode>* first_group_node = new BinaryTreeNode<WorldDatabaseNode>(std::move(first_group_data.value()));
+			BinaryTreeNode<WorldDatabaseNode>* first_group_node = first_group_node_opt.value();
 
 			for (std::uint32_t i = 1; i < num_groups; ++i)
 			{
-				std::optional<WorldDatabaseNode> wdbn_opt= ParseGroup(byte_ptr, end);
+				std::optional<BinaryTreeNode<WorldDatabaseNode>*> btn_opt = ParseGroup(byte_ptr, end);
 
 				// Return empty if we failed to parse a group
 				// TODO: Error reporting!
-				if (!wdbn_opt.has_value())
+				if (!btn_opt.has_value())
 				{
 					return std::nullopt;
 				}
 
-				first_group_node->AddSibling(std::move(wdbn_opt.value()));
+				first_group_node->AddSibling(btn_opt.value());
 			}
 
 			return std::make_optional<BinaryTreeNode<WorldDatabaseNode>*>(first_group_node);

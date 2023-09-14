@@ -43,6 +43,8 @@ namespace libWDB
 
 			auto AddSibling(T&& new_sibling_data) -> BinaryTreeNode<T>*;
 
+			auto AddSibling(BinaryTreeNode<T>* sibling) -> void;
+
 			[[nodiscard]] auto HasChildren() const noexcept -> bool;
 
 			[[nodiscard]] auto Children() const -> std::vector<BinaryTreeNode<T>*>;
@@ -169,6 +171,22 @@ namespace libWDB
 		this->next_sibling = std::make_optional<BinaryTreeNode*>(bt_node);
 
 		return bt_node;
+	}
+
+	template <typename T>
+	auto BinaryTreeNode<T>::AddSibling(BinaryTreeNode<T>* sibling) -> void
+	{
+		if (this->next_sibling.has_value())
+		{
+			return this->next_sibling.value()->AddSibling(sibling);
+		}
+
+		if (this->parent.has_value())
+		{
+			sibling->SetParent(this->parent.value());
+		}
+
+		this->next_sibling = std::make_optional<BinaryTreeNode*>(sibling);
 	}
 
 	template <typename T>

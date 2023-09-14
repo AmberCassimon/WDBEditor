@@ -138,13 +138,6 @@ namespace libWDB
 			FILE* fileptr
 		) -> void
 		{
-			if (!database.LooseGIFChunk().has_value())
-			{
-				return;
-			}
-
-			const GIFChunk& gif_chunk = database.LooseGIFChunk()->get();
-
 			// TODO: Serialize GIF Image
 		}
 	} // namespace __detail

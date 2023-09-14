@@ -215,25 +215,31 @@ namespace WDBEditor
 
 		try
 		{
-			std::optional<libWDB::WorldDatabase> wdb_opt = libWDB::ParseWDB(fileptr);
+			std::optional<libWDB::ParseResult> parse_result_opt = libWDB::ParseWDB(fileptr);
 
-			if (wdb_opt.has_value())
+			if (parse_result_opt.has_value())
 			{
 				this->filename = std::string {utf8_bytes.data()};
 				this->dirty = false;
 
 				this->UpdateWindowTitle();
 
-				libWDB::WorldDatabase wdb = std::move(wdb_opt.value());
+				libWDB::ParseResult result {parse_result_opt.value()};
 
-				QLooseGIFChunk* qloose_gif_chunk = new QLooseGIFChunk();
-				qloose_gif_chunk->SetModel(std::move(wdb.LooseGIFChunk().value()));
+				if (result.loose_gif_chunk.has_value())
+				{
+					QLooseGIFChunk* qloose_gif_chunk = new QLooseGIFChunk();
+					qloose_gif_chunk->SetModel(std::move(result.loose_gif_chunk.value()));
+				}
 
-				QWorldDatabase* qworld_db = new QWorldDatabase();
-				qworld_db->SetModel(std::move(wdb));
+				if (result.first_group.has_value())
+				{
+					QWorldDatabase* qworld_db = new QWorldDatabase();
+					qworld_db->SetModel(libWDB::WorldDatabase{result.first_group.value()});
 
-				this->structure_view->SetModel(qworld_db);
-				this->qwdb = qworld_db;
+					this->structure_view->SetModel(qworld_db);
+					this->qwdb = qworld_db;
+				}
 			}
 		} catch (libWDB::WDBParseException& wpe)
 		{
