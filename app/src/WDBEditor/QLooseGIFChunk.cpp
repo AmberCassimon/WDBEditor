@@ -29,7 +29,7 @@ namespace WDBEditor
 	{
 		if ((Qt::Horizontal == orientation) && (Qt::DisplayRole == role))
 		{
-			std::array<QString, 4> sections {"Filename", "Width", "Height", ""};
+			std::array<QString, 5> sections {"Filename", "Width", "Height", "Palette Size", ""};
 
 			if (sections.size() <= section)
 			{
@@ -53,7 +53,7 @@ namespace WDBEditor
 		return 0;
 	}
 
-	auto QLooseGIFChunk::columnCount(const QModelIndex& parent) const -> int { return 4; }
+	auto QLooseGIFChunk::columnCount(const QModelIndex& parent) const -> int { return 5; }
 
 	auto QLooseGIFChunk::index(int row, int column, const QModelIndex& parent) const -> QModelIndex
 	{
@@ -63,6 +63,11 @@ namespace WDBEditor
 	auto QLooseGIFChunk::parent(const QModelIndex& child) const -> QModelIndex { return QModelIndex(); }
 
 	auto QLooseGIFChunk::data(const QModelIndex& index, int role) const -> QVariant {
+		if ((Qt::DisplayRole != role) && (Qt::TextAlignmentRole != role))
+		{
+			return QVariant();
+		}
+
 		if (this->rowCount(index.parent()) <= index.row())
 		{
 			return QVariant();
@@ -78,13 +83,44 @@ namespace WDBEditor
 		switch (index.column())
 		{
 			case 0:
-				return QString::fromStdString(img.name);
+				if (Qt::DisplayRole == role)
+				{
+					return QString::fromStdString(img.name);
+				}
+				else if (Qt::TextAlignmentRole == role)
+				{
+					return Qt::AlignLeft;
+				}
 
 			case 1:
-				return QString::fromStdString(std::to_string(img.width));
+				if (Qt::DisplayRole == role)
+				{
+					return QString::fromStdString(std::to_string(img.width));
+				}
+				else if (Qt::TextAlignmentRole == role)
+				{
+					return Qt::AlignRight;
+				}
 
 			case 2:
-				return QString::fromStdString(std::to_string(img.height));
+				if (Qt::DisplayRole == role)
+				{
+					return QString::fromStdString(std::to_string(img.height));
+				}
+				else if (Qt::TextAlignmentRole == role)
+				{
+					return Qt::AlignRight;
+				}
+
+			case 3:
+				if (Qt::DisplayRole == role)
+				{
+					return QString::fromStdString(std::to_string(img.colors.size()));
+				}
+				else if (Qt::TextAlignmentRole == role)
+				{
+					return Qt::AlignRight;
+				}
 
 			default:
 				return QVariant();

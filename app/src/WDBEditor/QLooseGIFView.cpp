@@ -5,6 +5,8 @@
 
 #include "WDBEditor/QLooseGIFView.hpp"
 
+#include <QHeaderView>
+
 namespace WDBEditor
 {
 	QLooseGIFView::QLooseGIFView(QWidget* parent):
@@ -34,10 +36,15 @@ namespace WDBEditor
 
 	auto QLooseGIFView::PrepareGIFList() -> QTreeView*
 	{
-		QTreeView* list_view = new QTreeView();
+		QTreeView* tree_view = new QTreeView();
+		tree_view->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+		tree_view->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+		tree_view->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+		tree_view->setAlternatingRowColors(true);
+		tree_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-		this->h_splitter->addWidget(list_view);
+		this->h_splitter->addWidget(tree_view);
 
-		return list_view;
+		return tree_view;
 	}
 } // namespace WDBEditor
