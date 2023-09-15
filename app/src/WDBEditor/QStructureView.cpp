@@ -65,7 +65,6 @@ namespace WDBEditor
 
 	auto QStructureView::PrepareTreeView() -> QTreeView* {
 		QTreeView* treeView = new QTreeView(this->h_splitter);
-		treeView->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
 		treeView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 		treeView->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 		treeView->setAlternatingRowColors(true);

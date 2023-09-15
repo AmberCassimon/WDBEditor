@@ -57,7 +57,12 @@ namespace WDBEditor
 
 	auto QLooseGIFChunk::index(int row, int column, const QModelIndex& parent) const -> QModelIndex
 	{
-		return this->createIndex(row, column);
+		if (this->rowCount(parent) <= row)
+		{
+			return QModelIndex();
+		}
+
+		return this->createIndex(row, column, static_cast<void*>(const_cast<libWDB::GIFImage*>(&(this->gif_chunk.images.at(row)))));
 	}
 
 	auto QLooseGIFChunk::parent(const QModelIndex& child) const -> QModelIndex { return QModelIndex(); }

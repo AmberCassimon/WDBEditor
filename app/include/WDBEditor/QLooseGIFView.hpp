@@ -12,6 +12,7 @@
 #include <QWidget>
 
 #include "WDBEditor/QLooseGIFChunk.hpp"
+#include "WDBEditor/QLooseGIFPanel.hpp"
 
 namespace WDBEditor
 {
@@ -31,9 +32,12 @@ namespace WDBEditor
 			QSplitter* h_splitter {nullptr};
 
 			QTreeView* gif_list {nullptr};
+			QLooseGIFPanel* gif_panel {nullptr};
 
 			auto PrepareHSplitter() -> QSplitter*;
 
 			auto PrepareGIFList() -> QTreeView*;
+
+			auto PrepareGIFPanel() -> QLooseGIFPanel*;
 	};
 } // namespace WDBEditor
