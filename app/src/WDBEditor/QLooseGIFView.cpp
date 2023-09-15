@@ -41,6 +41,8 @@ namespace WDBEditor
 		tree_view->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 		tree_view->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 		tree_view->setAlternatingRowColors(true);
+		tree_view->setItemsExpandable(false);
+		tree_view->setIndentation(0);
 		tree_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 		this->h_splitter->addWidget(tree_view);
