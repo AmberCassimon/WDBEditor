@@ -19,16 +19,17 @@ The loose GIF chunk is currently not reconstructed yet, and is not yet visible i
 6. ~~Parse loose GIF Chunk~~ (We currently just read the straight binary data, and don't parse the content)
 7. ~~Serialize loose GIF Chunk~~ (We currently just dump the full binary data, without parsing the contents)
 8. ~~Add CI pipeline~~
-9. Parse loose model Chunk
-10. Serialize loose model Chunk
-11. Parse loose GIF Chunk contents
-12. Parse loose model chunk contents
-13. Show loose GIF Chunk in UI
-14. Show loose model Chunk in UI
-15. Show binary data for per-subitem data
-16. Parse per-subitem data (Without reconstruction, but with 1:1 binary copy into the saved file)
-17. Reconstruct per-subitem data (Rather than just copying the bytes 1:1)
-18. Add support for replacing actual assets (This will be worked out further when I get closer to this)
+9. ~~Parse loose GIF Chunk contents~~
+10. ~~Show loose GIF Chunk in UI~~
+11. Allow exporting of GIFs from loose GIF chunk
+12. Parse loose model Chunk
+13. Serialize loose model Chunk
+14. Parse loose model chunk contents
+15. Show loose model Chunk in UI
+16. Show binary data for per-subitem data
+17. Parse per-subitem data (Without reconstruction, but with 1:1 binary copy into the saved file)
+18. Reconstruct per-subitem data (Rather than just copying the bytes 1:1)
+19. Add support for replacing actual assets (This will be worked out further when I get closer to this)
 
 ## Useful Resources
 These are some resources I found useful while working on this tool.
