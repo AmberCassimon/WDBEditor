@@ -7,6 +7,7 @@
 
 #include <QLabel>
 #include <QModelIndex>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -21,11 +22,17 @@ namespace WDBEditor
 
 			auto SelectionChanged(const QModelIndex& current_index, const QModelIndex& previous_index) -> void;
 
+		public slots:
+			auto ExportButtonClicked(bool checked) -> void;
+
 		private:
 			QVBoxLayout* root_layout {nullptr};
 
-			QLabel* label {nullptr};
+			QLabel* img_label {nullptr};
+			QPushButton* export_button {nullptr};
 
 			auto PrepareLabel() -> QLabel*;
+
+			auto PrepareExportButton() -> QPushButton*;
 	};
 } // namespace WDBEditor
