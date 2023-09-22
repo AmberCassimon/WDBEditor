@@ -8,7 +8,6 @@
 #include <QDebug>
 #include <QFileDialog>
 
-#include "libWDB/GIFImage.hpp"
 #include "WDBEditor/Util.hpp"
 
 namespace WDBEditor
@@ -28,30 +27,35 @@ namespace WDBEditor
 
 	auto QLooseGIFPanel::SelectionChanged(const QModelIndex& current_index, const QModelIndex& previous_index) -> void
 	{
-		libWDB::GIFImage* gifImg = reinterpret_cast<libWDB::GIFImage*>(current_index.internalPointer());
+		this->selected_image = std::make_optional(reinterpret_cast<libWDB::GIFImage*>(current_index.internalPointer()));
 
-		QImage newImage = QImage(gifImg->width, gifImg->height, QImage::Format::Format_Indexed8);
-		newImage.setColorCount(static_cast<int>(gifImg->colors.size()));
-
-		for (std::size_t color_idx = 0; color_idx < gifImg->colors.size(); ++color_idx)
+		if (this->selected_image.has_value())
 		{
-			newImage.setColor(
-				static_cast<int>(color_idx),
-				qRgb(gifImg->colors.at(color_idx).r, gifImg->colors.at(color_idx).g, gifImg->colors.at(color_idx).b)
-			);
-		}
+			libWDB::GIFImage* img = this->selected_image.value();
 
-		for (std::uint32_t row = 0; row < gifImg->height; ++row)
-		{
-			for (std::uint32_t col = 0; col < gifImg->width; ++col)
+			QImage newImage = QImage(img->width, img->height, QImage::Format::Format_Indexed8);
+			newImage.setColorCount(static_cast<int>(img->colors.size()));
+
+			for (std::size_t color_idx = 0; color_idx < img->colors.size(); ++color_idx)
 			{
-				const std::size_t idx = (row * gifImg->width) + col;
-
-				newImage.setPixel(col, row, gifImg->color_index.at(idx));
+				newImage.setColor(
+					static_cast<int>(color_idx),
+					qRgb(img->colors.at(color_idx).r, img->colors.at(color_idx).g, img->colors.at(color_idx).b)
+				);
 			}
-		}
 
-		this->img_label->setPixmap(QPixmap::fromImage(newImage));
+			for (std::uint32_t row = 0; row < img->height; ++row)
+			{
+				for (std::uint32_t col = 0; col < img->width; ++col)
+				{
+					const std::size_t idx = (row * img->width) + col;
+
+					newImage.setPixel(col, row, img->color_index.at(idx));
+				}
+			}
+
+			this->img_label->setPixmap(QPixmap::fromImage(newImage));
+		}
 	}
 
 	auto QLooseGIFPanel::PrepareLabel() -> QLabel*
@@ -84,18 +88,35 @@ namespace WDBEditor
 			return;
 		}
 
+		std::string output_filename = HomeDirectory();
+
+		if (this->selected_image.has_value())
+		{
+			output_filename += ("/" + this->selected_image.value()->name);
+		}
+		else
+		{
+			output_filename += "/Image.BMP";
+		}
+
+		qDebug() << QString::fromStdString(output_filename);
+
 		const QString filename = QFileDialog::getSaveFileName(
 			this,
-			"Save .GIF File",
-			"C:\\Users\\amber\\G.GIF"
+			"Save Image File",
+			QString::fromStdString(output_filename)
 		);
 
-		// Open the file
-		QFile file (filename);
-		file.open(QIODevice::WriteOnly);
+		// If the user closes the window, we get an empty string
+		if (0 < filename.length())
+		{
+			// Open the file
+			QFile file (filename);
+			file.open(QIODevice::WriteOnly);
 
-		this->img_label->pixmap()->save(&file, "BMP");
+			this->img_label->pixmap()->save(&file, "BMP");
 
-		file.close();
+			file.close();
+		}
 	}
 } // namespace WDBEditor

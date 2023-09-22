@@ -5,11 +5,15 @@
 
 #pragma once
 
+#include <optional>
+
 #include <QLabel>
 #include <QModelIndex>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
+
+#include "libWDB/GIFImage.hpp"
 
 namespace WDBEditor
 {
@@ -26,6 +30,8 @@ namespace WDBEditor
 			auto ExportButtonClicked(bool checked) -> void;
 
 		private:
+			std::optional<libWDB::GIFImage*> selected_image {std::nullopt};
+
 			QVBoxLayout* root_layout {nullptr};
 
 			QLabel* img_label {nullptr};
